@@ -1,0 +1,11 @@
+{% macro field(name,label,type='text',hint='',required=true) %}
+<div class="field">
+  <label for="{{ name }}">{{ label }}{% if required %} *{% endif %}</label>
+  <input id="{{ name }}" name="{{ name }}" type="{{ type }}"
+         value="{{ '' if type=='password' else values.get(name,'') }}"
+         {% if required %}required{% endif %}
+         aria-describedby="{{ name }}-hint{% if errors.get(name) %} {{ name }}-error{% endif %}">
+  <small id="{{ name }}-hint">{{ hint }}</small>
+  {% if errors.get(name) %}<span class="field-error" id="{{ name }}-error">{{ errors[name] }}</span>{% endif %}
+</div>
+{% endmacro %}

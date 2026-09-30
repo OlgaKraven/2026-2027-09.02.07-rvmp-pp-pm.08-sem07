@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from '_field.html' import field with context %}
+{% block title %}Заявка — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="form-card"><h1>Заявка: {{ room.name }}</h1><p>До {{ room.capacity }} участников.</p>
+<form method="post" class="stack-form" novalidate>
+  <input type="hidden" name="csrf" value="{{ session.csrf }}">
+  {{ field('event_name','Название мероприятия',hint='3–120 символов') }}
+  {{ field('event_date','Дата','date') }}{{ field('event_time','Время','time') }}
+  {{ field('participants','Участники','number') }}
+  <div class="field"><label for="payment">Способ оплаты *</label>
+    <select id="payment" name="payment" required>
+      <option value="">Выберите</option>
+      {% for item in ['Карта','СБП','Наличные'] %}<option {% if values.get('payment')==item %}selected{% endif %}>{{ item }}</option>{% endfor %}
+    </select>
+    {% if errors.payment %}<span class="field-error">{{ errors.payment }}</span>{% endif %}
+  </div>
+  <button class="button-primary">Отправить заявку</button>
+</form></section>
+{% endblock %}

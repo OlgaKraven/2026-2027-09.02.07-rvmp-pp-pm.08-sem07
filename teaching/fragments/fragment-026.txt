@@ -1,0 +1,13 @@
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    errors = {}
+    if request.method == 'POST':
+        user = query('SELECT * FROM users WHERE username=%s', (request.form.get('username', ''),), one=True)
+        if user and check_password_hash(user['password_hash'], request.form.get('password', '')):
+            session.clear()
+            session['user_id'] = user['id']
+            return redirect(url_for('admin' if user['is_admin'] else 'dashboard'))
+        errors['password'] = 'Логин или пароль неверны.'
+    return render_template('login.html', errors=errors, values={})
+
+

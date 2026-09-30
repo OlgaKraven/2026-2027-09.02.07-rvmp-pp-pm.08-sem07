@@ -1,0 +1,8 @@
+def query(sql, values=(), *, one=False, write=False):
+    with db().cursor() as cursor:
+        cursor.execute(sql, values)
+        if write:
+            return cursor.lastrowid
+        return cursor.fetchone() if one else cursor.fetchall()
+
+

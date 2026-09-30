@@ -1,0 +1,7 @@
+@app.route('/admin')
+def admin():
+    require_user(admin=True)
+    rows = query('SELECT a.*,r.name AS room_name,u.full_name FROM applications a JOIN rooms r ON r.id=a.room_id JOIN users u ON u.id=a.user_id ORDER BY a.id DESC')
+    return render_template('admin.html', applications=rows)
+
+

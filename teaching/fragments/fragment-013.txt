@@ -1,0 +1,10 @@
+@app.cli.command('import-rooms')
+@click.argument('filename', type=click.Path(exists=True, path_type=Path))
+def import_rooms(filename):
+    rows = json.loads(filename.read_text())
+    for room in rows:
+        query('INSERT INTO rooms (name,category,city,address,capacity,hourly_rate,image,description,equipment) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+              tuple(room[k] for k in ('name','category','city','address','capacity','hourly_rate','image','description','equipment')), write=True)
+    click.echo(f'Добавлено помещений: {len(rows)}. Повторный импорт добавит ещё записи.')
+
+

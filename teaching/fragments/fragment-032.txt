@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Мои заявки</h1>
+{% for item in applications %}
+<article class="application-card">
+  <h2>{{ item.event_name }}</h2><p>{{ item.room_name }} · {{ item.event_date }} {{ item.event_time }}</p>
+  <p class="status">{{ item.status }}</p>
+  {% if item.rating %}<p>Ваш отзыв: {{ item.rating }}/5 — {{ item.comment }}</p>
+  {% elif item.status=='Завершено' %}
+  <form method="post" action="{{ url_for('review', application_id=item.id) }}">
+    <input type="hidden" name="csrf" value="{{ session.csrf }}">
+    <label>Оценка <select name="rating">{% for n in range(1,6) %}<option>{{ n }}</option>{% endfor %}</select></label>
+    <label>Отзыв <textarea name="comment" required maxlength="500"></textarea></label>
+    <button class="button-primary">Сохранить отзыв</button>
+  </form>
+  {% endif %}
+</article>
+{% else %}<p>Заявок пока нет. <a href="{{ url_for('rooms') }}">Выберите площадку</a>.</p>{% endfor %}
+{% endblock %}

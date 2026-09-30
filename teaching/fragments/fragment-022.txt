@@ -1,0 +1,14 @@
+<article class="room-card">
+  {% if room.image %}
+    <img src="{{ url_for('static', filename=room.image) }}" alt="{{ room.name }}">
+  {% else %}
+    <div class="room-placeholder" aria-hidden="true">{{ types[room.category] }}</div>
+  {% endif %}
+  <div class="room-card-body">
+    <p class="eyebrow">{{ room.city }} · {{ types[room.category] }}</p>
+    <h2>{{ room.name }}</h2><p>{{ room.description }}</p>
+    {% if room.equipment %}<p>Оснащение: {{ room.equipment }}</p>{% endif %}
+    <p>До {{ room.capacity }} человек · {{ room.hourly_rate }} руб./ч</p>
+    <a class="button button-primary" href="{{ '/apply/' ~ room.id if g.user else '/login' }}">Выбрать</a>
+  </div>
+</article>

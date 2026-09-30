@@ -1,0 +1,7 @@
+def require_user(admin=False):
+    if not g.user:
+        abort(401)
+    if admin and not g.user['is_admin']:
+        abort(403)
+
+

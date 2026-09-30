@@ -1,0 +1,11 @@
+.form-card { max-width: 640px; margin: auto; padding: 32px; border-radius: 16px; background: white; }
+.form-card h1 { font-size: 32px; }
+.stack-form { display: grid; gap: calc(2 * var(--space)); }
+.field { display: grid; gap: 4px; }
+label { font-weight: 600; }
+input, select, textarea { display: block; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #72829b; border-radius: 6px; color: inherit; font: inherit; background: white; }
+small { font-size: 13px; color: #465873; }
+.field-error { font-size: 14px; color: var(--error); }
+[aria-invalid="true"] { border: 2px solid var(--error); }
+.design-summary { padding: 12px 16px; margin: 0; background: #e9f0fa; border-left: 4px solid var(--accent); }
+.design-summary strong { display: block; }

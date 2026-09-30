@@ -1,0 +1,11 @@
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+$env:FLASK_SECRET="local-learning-secret-change-before-real-use"
+$env:MYSQL_HOST="127.0.0.1"
+$env:MYSQL_PORT="3306"
+$env:MYSQL_DATABASE="pm08_learning_2027"
+$env:MYSQL_USER="pm08_learning"
+$env:MYSQL_PASSWORD="LocalPractice2027!"
+.\.venv\Scripts\python.exe -m flask --app app init-db
+.\.venv\Scripts\python.exe -m flask --app app import-rooms rooms.json
+.\.venv\Scripts\python.exe -m flask --app app run --port 5019

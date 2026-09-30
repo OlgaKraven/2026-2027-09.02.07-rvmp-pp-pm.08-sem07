@@ -1,0 +1,14 @@
+@app.post('/review/<int:application_id>')
+def review(application_id):
+    require_user()
+    row = query('SELECT * FROM applications WHERE id=%s AND user_id=%s', (application_id, g.user['id']), one=True)
+    if not row:
+        abort(404)
+    rating, comment = request.form.get('rating', ''), request.form.get('comment', '').strip()
+    if row['status'] != 'Завершено' or rating not in ('1','2','3','4','5') or not 1 <= len(comment) <= 500:
+        abort(400, 'Отзыв: завершённая своя заявка, оценка 1–5 и текст 1–500 символов.')
+    try:
+        query('INSERT INTO reviews (application_id,rating,comment) VALUES (%s,%s,%s)', (application_id, int(rating), comment), write=True)
+    except pymysql.err.IntegrityError:
+        abort(400, 'Отзыв уже оставлен.')
+    return redirect(url_for('dashboard'))

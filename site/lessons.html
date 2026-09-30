@@ -1,103 +1,495 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Инструкция и образец</title><link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Перейти к содержанию</a><header class="shell top"><a class="brand" href="index.html"><span class="emblem">ПП</span><span><strong>Практика / Методические материалы</strong><small>7 семестр · Разработчик веб и мультимедийных приложений · Python / Flask / MySQL</small></span></a><span class="version">Версия 1.1</span></header><div class="shell"><nav><a href="index.html" >Задание</a><a href="lessons.html" aria-current=page>Инструкция и образец</a><a href="areas.html" >Предметные области</a></nav><main id="main"><section class="hero"><p class="eyebrow">Учебный маршрут / 2026-2027</p><h1>Инструкция и образец</h1><p>7 семестр · Разработчик веб и мультимедийных приложений · Python / Flask / MySQL</p><span class="badge">Учебный комплект</span></section><div class="downloads"><a class="button" href="downloads/assignment.pdf">Скачать задание практики (PDF)</a><a class="button" href="downloads/guide.pdf">Скачать методичку и образец (PDF)</a><a class="button" href="downloads/report-template.md">Скачать общий шаблон отчёта (Markdown)</a></div><article class="lesson"><h2>Конференции.РФ</h2><p>Учебный разбор дизайна сервиса «Конференции.РФ» на Python, Flask и MySQL: запуск исходной основы, последовательное изменение интерфейса и проверка результата. Демонстрация не входит в 30 индивидуальных областей.</p></article><article class="lesson" id="page-1"><p class="eyebrow"></p><h2>Учебная задача: улучшить работающий интерфейс</h2><div class="blocks"><section class="block text"><h3>Результат разбора</h3><p>Разработаем дизайн «Конференции.РФ»: пользователь выбирает площадку, регистрируется и отправляет заявку; администратор назначает и завершает мероприятие; пользователь оставляет отзыв. В этом руководстве используется только Python / Flask / MySQL. Решение показано в тексте и фрагментах кода; все необходимые действия объяснены здесь.</p></section><section class="block text"><h3>Что изучаем в ПМ.08</h3><p>Начальная основа содержит сервер, таблицы, каталог, формы и базовый интерфейс. Мы не переписываем весь сервер: улучшаем главное действие, обратную связь формы, доступность, карточки и мобильную компоновку. Каждый новый фрагмент добавляется в определённое место и заканчивается проверкой. Сначала выполните демонстрацию, затем создайте самостоятельный дизайн своей области.</p></section><section class="block text"><h3>Последовательность</h3><p>Запуск и исходный сценарий → проектирование страниц → подключение CSS/JS → кнопки и формы → карточки и мобильный экран → интерактивная подсказка → ошибки и фокус → полный сценарий → перенос в свою область. Сохраняйте рабочее состояние после каждого законченного изменения.</p></section></div></article><article class="lesson" id="page-2"><p class="eyebrow"></p><h2>Открыть начальную основу в редакторе</h2><div class="blocks"><p class="block"><a class="button" href="downloads/Conference-Flask-source.zip">Скачать начальную основу Flask + MySQL (ZIP)</a><br>Сервер и исходные страницы для учебного разбора. Дополнительный слой дизайна вы создаёте по коду методички.</p><section class="block text"><h3>Проект для учебного разбора</h3><p>Загрузите начальную основу ниже и распакуйте ZIP в отдельную папку. Это приложение до добавления учебных design.css и design.js; оно не является готовым индивидуальным проектом. В Visual Studio Code выберите File → Open Folder… / Файл → Открыть папку… и откройте projects/source/flask — папку с app.py. В левой панели должны быть видны app.py, templates, static, rooms.json и requirements.txt.</p></section><section class="block text"><h3>Как устроены файлы</h3><p>app.py принимает запросы и проверяет действия. mysql_backend.py выполняет запросы к MySQL. templates/base.html задаёт общую оболочку, остальные шаблоны — содержимое страниц. static/css/style.css и static/js/app.js — исходное оформление и поведение. rooms.json содержит первоначальные площадки; schema-mysql.sql описывает таблицы. В этой практике мы добавляем два собственных файла и подключаем их в base.html.</p></section><section class="block text"><h3>Проверить среду</h3><p>Откройте Terminal → New Terminal / Терминал → Создать терминал. В Windows выполните py -3 --version, в macOS — python3 --version. Нужен Python 3.10 или новее и работающий локальный MySQL. Для просмотра таблиц используйте доступный MySQL Workbench или phpMyAdmin. Запишите фактические версии; не меняйте чужие базы.</p></section></div></article><article class="lesson" id="page-3"><p class="eyebrow"></p><h2>Создать отдельную базу MySQL</h2><div class="blocks"><section class="block text"><h3>Подготовка</h3><p>Откройте SQL Editor в MySQL Workbench либо SQL в phpMyAdmin и подключитесь как администратор своего локального учебного MySQL. Выполните следующий фрагмент один раз. Если такая база или пользователь уже существуют, выберите новые имена и затем используйте их в командах запуска. Не удаляйте существующую базу ради повторного запуска.</p></section><section class="block code"><h3>Учебный фрагмент: database.sql</h3><pre>-- Выполните под учётной записью администратора локального MySQL.
-CREATE DATABASE pm08_design_2027
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER &#x27;pm08_design&#x27;@&#x27;127.0.0.1&#x27;
-  IDENTIFIED BY &#x27;Practice2027Db!&#x27;;
-GRANT ALL PRIVILEGES ON pm08_design_2027.*
-  TO &#x27;pm08_design&#x27;@&#x27;127.0.0.1&#x27;;</pre></section><section class="block text"><h3>Почему отдельный пользователь</h3><p>Учётная запись pm08_design имеет доступ только к pm08_design_2027. Показанный пароль — учебное значение для локального стенда; параметры реальной среды задавайте в переменных окружения. Сервер MySQL должен быть запущен. Порт обычно 3306; если он иной, укажите его при запуске Flask.</p></section><section class="block text"><h3>Как появятся таблицы</h3><p>База пока пустая. При первом запуске Flask исходная основа применит schema-mysql.sql, загрузит шесть площадок из rooms.json и создаст учебного администратора. Поэтому не нужно вручную выполнять одновременно обе схемы или копировать таблицы из другого проекта. users хранит пользователей, rooms — площадки, applications — заявки, reviews — отзывы.</p></section></div></article><article class="lesson" id="page-4"><p class="eyebrow"></p><h2>Запустить Python и Flask в Windows</h2><div class="blocks"><section class="block text"><h3>Windows: PowerShell в VS Code</h3><p>Выполните команды ниже в терминале папки с app.py. Виртуальное окружение отделяет зависимости этого проекта; прямой путь к python.exe позволяет работать без изменения ExecutionPolicy. pip устанавливает зависимости из приложенного requirements.txt. Если используете другую БД, пользователя или порт, замените соответствующие значения.</p></section><section class="block code"><h3>Учебный фрагмент: run-windows.ps1</h3><pre>py -3 -m venv .venv
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Инструкция и образец</title><link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Перейти к содержанию</a><header class="shell top"><a class="brand" href="index.html"><span class="emblem">ПП</span><span><strong>Практика / Методические материалы</strong><small>7 семестр · Разработчик веб и мультимедийных приложений · Python / Flask / MySQL</small></span></a><span class="version">Версия 1.2</span></header><div class="shell"><nav><a href="index.html" >Задание</a><a href="lessons.html" aria-current=page>Инструкция и образец</a><a href="areas.html" >Предметные области</a></nav><main id="main"><section class="hero"><p class="eyebrow">Учебный маршрут / 2026-2027</p><h1>Инструкция и образец</h1><p>7 семестр · Разработчик веб и мультимедийных приложений · Python / Flask / MySQL</p><span class="badge">Учебный комплект</span></section><div class="downloads"><a class="button" href="downloads/assignment.pdf">Скачать задание практики (PDF)</a><a class="button" href="downloads/guide.pdf">Скачать методичку и образец (PDF)</a><a class="button" href="downloads/report-template.md">Скачать общий шаблон отчёта (Markdown)</a></div><article class="lesson"><h2>Конференции.РФ</h2><p>Создание учебного примера «Конференции.РФ» с пустой папки: модель MySQL, маршруты Python/Flask, шаблоны, дизайн и проверка пользовательского сценария. Весь разбор приведён в методичке; архив готового приложения не предоставляется.</p></article><article class="lesson" id="page-1"><p class="eyebrow"></p><h2>Как превратить задачу в интерфейс</h2><div class="blocks"><section class="block text"><h3>Учебный пример</h3><p>Создадим «Конференции.РФ» самостоятельно: от пустой папки до страниц выбора площадки, регистрации, заявки, кабинета и администратора. Решение приведено прямо в методичке, отдельный готовый проект не требуется. Стек: Python, Flask, MySQL, HTML, CSS и JavaScript.</p></section><section class="block text"><h3>Пользователь и главное действие</h3><p>Организатор хочет найти подходящий зал. На главной объясним назначение сервиса; в каталоге покажем вместимость и оснащение; в заявке дадим понятные поля; в кабинете обозначим состояние. Сначала набросайте каркасы страниц на бумаге: где заголовок, условия выбора, результат и главное действие. Цвет и декор выбираются после этой структуры.</p></section><section class="block text"><h3>Как работать с кодом</h3><p>Создавайте указанные файлы самостоятельно. Фрагменты app.py и design.css добавляются сверху вниз в указанном порядке; шаблоны создаются отдельно. Подпись каждого фрагмента указывает место изменения. После законченного этапа проверяйте описанный результат. Полный серверный сценарий нужен для проверки дизайна, но основная цель ПМ.08 — понятный и доступный интерфейс.</p></section></div></article><article class="lesson" id="page-2"><p class="eyebrow"></p><h2>Создать структуру своего примера</h2><div class="blocks"><section class="block text"><h3>Пустая рабочая папка</h3><p>Создайте папку conference-learning, внутри — templates и static. Пока в ней нет приложения. В этой папке появятся app.py, schema.sql, rooms.json и requirements.txt; HTML-шаблоны создадим в templates, дизайн — в static/design.css и static/design.js. Названия сохраняйте точно: Flask ищет templates и static автоматически.</p></section><section class="block text"><h3>Среда</h3><p>Используйте Python 3.10 или новее и локальный MySQL. Проверка версии: Windows — py -3 --version, macOS — python3 --version. Для SQL можно использовать уже установленный MySQL Workbench. В терминале создаваемого проекта выполняются показанные далее команды.</p></section></div></article><article class="lesson" id="page-3"><p class="eyebrow"></p><h2>Определить зависимости приложения</h2><div class="blocks"><section class="block code"><h3>Создайте requirements.txt</h3><pre>Flask&gt;=3.1,&lt;4
+PyMySQL&gt;=1.1,&lt;2</pre></section><section class="block text"><h3>Для чего нужны библиотеки</h3><p>Flask связывает URL с функцией Python и выводит шаблоны. PyMySQL выполняет запросы к MySQL. werkzeug входит в зависимости Flask: его функции понадобятся для хеширования пароля. Установка этих зависимостей показана перед первым запуском.</p></section></div></article><article class="lesson" id="page-4"><p class="eyebrow"></p><h2>Выделить отдельную базу MySQL</h2><div class="blocks"><section class="block text"><h3>Выполнить SQL один раз</h3><p>В локальном клиенте MySQL под администратором выполните SQL. Это отдельная учебная база и пользователь с правами только на неё. Если имя уже занято, выберите другое и используйте его далее; существующую базу не удаляйте.</p></section><section class="block code"><h3>Создайте database.sql</h3><pre>CREATE DATABASE pm08_learning_2027 CHARACTER SET utf8mb4;
+CREATE USER &#x27;pm08_learning&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;LocalPractice2027!&#x27;;
+GRANT ALL PRIVILEGES ON pm08_learning_2027.* TO &#x27;pm08_learning&#x27;@&#x27;127.0.0.1&#x27;;</pre></section><section class="block text"><h3>Зачем отделять данные</h3><p>Отдельная база исключает смешивание примера с вашей индивидуальной областью. Показанный пароль — вымышленное значение локального стенда. Здесь мы создаём только базу; таблицы опишем следующими фрагментами.</p></section></div></article><article class="lesson" id="page-5"><p class="eyebrow"></p><h2>Спроектировать пользователей и площадки</h2><div class="blocks"><section class="block text"><h3>Связь данных с экраном</h3><p>Пользователь вводит данные регистрации; площадка отображается карточкой каталога. UNIQUE запрещает повторные логины и почту. Пароль сохраняется только как хеш. В rooms храним характеристики, которые помогают выбрать помещение; category — техническое значение для фильтра.</p></section><section class="block code"><h3>Начало schema.sql: users и rooms</h3><pre>CREATE TABLE IF NOT EXISTS users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(30) NOT NULL UNIQUE,
+  full_name VARCHAR(150) NOT NULL,
+  phone VARCHAR(18) NOT NULL,
+  email VARCHAR(254) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  is_admin BOOLEAN NOT NULL DEFAULT FALSE
+);
+CREATE TABLE IF NOT EXISTS rooms (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(150) NOT NULL,
+  category VARCHAR(20) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  address VARCHAR(200) NOT NULL,
+  capacity INT NOT NULL,
+  hourly_rate DECIMAL(10,2) NOT NULL,
+  image VARCHAR(200) NOT NULL DEFAULT &#x27;&#x27;,
+  description TEXT NOT NULL,
+  equipment TEXT NOT NULL
+);</pre></section><section class="block text"><h3>Проверка структуры</h3><p>Сопоставьте поля rooms с каркасом карточки: название, тип, город, вместимость, стоимость, описание, оснащение. image пока может быть пустой строкой: позже предусмотрим понятную заглушку.</p></section></div></article><article class="lesson" id="page-6"><p class="eyebrow"></p><h2>Связать заявку, пользователя и отзыв</h2><div class="blocks"><section class="block code"><h3>Продолжите schema.sql: applications и reviews</h3><pre>CREATE TABLE IF NOT EXISTS applications (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  room_id INT NOT NULL,
+  event_name VARCHAR(120) NOT NULL,
+  event_date DATE NOT NULL,
+  event_time CHAR(5) NOT NULL,
+  participants INT NOT NULL,
+  payment VARCHAR(20) NOT NULL,
+  status VARCHAR(40) NOT NULL DEFAULT &#x27;Новая&#x27;,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (room_id) REFERENCES rooms(id)
+);
+CREATE TABLE IF NOT EXISTS reviews (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  application_id INT NOT NULL UNIQUE,
+  rating INT NOT NULL,
+  comment VARCHAR(500) NOT NULL,
+  FOREIGN KEY (application_id) REFERENCES applications(id)
+);</pre></section><section class="block text"><h3>Почему именно эти связи</h3><p>user_id и room_id связывают заявку с человеком и залом. FOREIGN KEY не допускает ссылки на отсутствующую запись. status содержит текст состояния. Один отзыв относится к одной заявке: UNIQUE на application_id запрещает повторный отзыв. DATE хранит дату как дату, а не текст.</p></section><section class="block text"><h3>Границы учебного примера</h3><p>Заявка не является реальным платежом. Проверка пересекающихся бронирований в этом примере не реализована. Интерфейс должен описывать только фактически работающие действия.</p></section></div></article><article class="lesson" id="page-7"><p class="eyebrow"></p><h2>Начать приложение Flask</h2><div class="blocks"><section class="block code"><h3>Начало app.py: импорты и настройки</h3><pre>import json
+import os
+import re
+import secrets
+from datetime import date
+from pathlib import Path
+
+import click
+import pymysql
+from flask import Flask, abort, g, redirect, render_template, request, session, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
+
+app = Flask(__name__)
+app.secret_key = os.environ[&#x27;FLASK_SECRET&#x27;]
+ROOT = Path(__file__).parent
+TYPES = {&#x27;auditorium&#x27;: &#x27;Аудитория&#x27;, &#x27;coworking&#x27;: &#x27;Коворкинг&#x27;, &#x27;cinema&#x27;: &#x27;Кинозал&#x27;}
+STATUSES = (&#x27;Новая&#x27;, &#x27;Мероприятие назначено&#x27;, &#x27;Завершено&#x27;)
+
+</pre></section><section class="block text"><h3>Разбор</h3><p>Flask(__name__) создаёт приложение. FLASK_SECRET задаётся при запуске и используется для подписи сессии. Path указывает папку текущего файла. TYPES связывает технические категории с русскими подписями, STATUSES задаёт порядок состояний заявки. Пока не запускайте сервер: сначала дополним соединение и главную страницу.</p></section></div></article><article class="lesson" id="page-8"><p class="eyebrow"></p><h2>Подключить Python к MySQL</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: db</h3><pre>def db():
+    if &#x27;db&#x27; not in g:
+        g.db = pymysql.connect(
+            host=os.environ[&#x27;MYSQL_HOST&#x27;], port=int(os.environ[&#x27;MYSQL_PORT&#x27;]),
+            user=os.environ[&#x27;MYSQL_USER&#x27;], password=os.environ[&#x27;MYSQL_PASSWORD&#x27;],
+            database=os.environ[&#x27;MYSQL_DATABASE&#x27;], charset=&#x27;utf8mb4&#x27;,
+            cursorclass=pymysql.cursors.DictCursor, autocommit=True)
+    return g.db
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: query</h3><pre>def query(sql, values=(), *, one=False, write=False):
+    with db().cursor() as cursor:
+        cursor.execute(sql, values)
+        if write:
+            return cursor.lastrowid
+        return cursor.fetchone() if one else cursor.fetchall()
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: close_db</h3><pre>@app.teardown_appcontext
+def close_db(error):
+    connection = g.pop(&#x27;db&#x27;, None)
+    if connection:
+        connection.close()
+
+</pre></section><section class="block text"><h3>Почему так</h3><p>g хранит соединение только в рамках текущего запроса. DictCursor возвращает записи по именам полей. Все значения передаются отдельно от SQL через %s — пользовательский ввод не склеивается с запросом. write=True обозначает изменение данных; one=True — одну запись. teardown закрывает соединение после запроса.</p></section></div></article><article class="lesson" id="page-9"><p class="eyebrow"></p><h2>Подготовить сессию и защиту формы</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: prepare_request</h3><pre>@app.before_request
+def prepare_request():
+    session.setdefault(&#x27;csrf&#x27;, secrets.token_urlsafe(24))
+    g.user = query(&#x27;SELECT * FROM users WHERE id=%s&#x27;, (session[&#x27;user_id&#x27;],), one=True) if &#x27;user_id&#x27; in session else None
+    if request.method == &#x27;POST&#x27;:
+        token = request.form.get(&#x27;csrf&#x27;, &#x27;&#x27;)
+        if not secrets.compare_digest(token, session[&#x27;csrf&#x27;]):
+            abort(400, &#x27;Обновите форму: проверка сессии не пройдена.&#x27;)
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: template_context</h3><pre>@app.context_processor
+def template_context():
+    return {&#x27;types&#x27;: TYPES, &#x27;statuses&#x27;: STATUSES}
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: require_user</h3><pre>def require_user(admin=False):
+    if not g.user:
+        abort(401)
+    if admin and not g.user[&#x27;is_admin&#x27;]:
+        abort(403)
+
+</pre></section><section class="block text"><h3>Связь сервера с интерфейсом</h3><p>g.user определяет, какие действия доступны в навигации. Случайный csrf-токен передаётся скрытым полем и сравнивается при POST. context_processor передаёт подписи категорий и статусов во все шаблоны. require_user проверяет вход и роль на сервере: скрытая кнопка сама по себе не ограничивает доступ.</p></section></div></article><article class="lesson" id="page-10"><p class="eyebrow"></p><h2>Создать команды для учебных данных</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: init_db</h3><pre>@app.cli.command(&#x27;init-db&#x27;)
+def init_db():
+    for statement in (ROOT / &#x27;schema.sql&#x27;).read_text().split(&#x27;;&#x27;):
+        if statement.strip():
+            query(statement, write=True)
+    query(&#x27;INSERT IGNORE INTO users (username, full_name, phone, email, password_hash, is_admin) VALUES (%s,%s,%s,%s,%s,1)&#x27;,
+          (&#x27;Conf2027&#x27;, &#x27;Учебный Администратор&#x27;, &#x27;8(900)000-00-00&#x27;, &#x27;admin@example.test&#x27;, generate_password_hash(&#x27;Demo77&#x27;)), write=True)
+    click.echo(&#x27;Таблицы созданы. Учебный администратор: Conf2027 / Demo77.&#x27;)
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: import_rooms</h3><pre>@app.cli.command(&#x27;import-rooms&#x27;)
+@click.argument(&#x27;filename&#x27;, type=click.Path(exists=True, path_type=Path))
+def import_rooms(filename):
+    rows = json.loads(filename.read_text())
+    for room in rows:
+        query(&#x27;INSERT INTO rooms (name,category,city,address,capacity,hourly_rate,image,description,equipment) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)&#x27;,
+              tuple(room[k] for k in (&#x27;name&#x27;,&#x27;category&#x27;,&#x27;city&#x27;,&#x27;address&#x27;,&#x27;capacity&#x27;,&#x27;hourly_rate&#x27;,&#x27;image&#x27;,&#x27;description&#x27;,&#x27;equipment&#x27;)), write=True)
+    click.echo(f&#x27;Добавлено помещений: {len(rows)}. Повторный импорт добавит ещё записи.&#x27;)
+
+</pre></section><section class="block text"><h3>Что делают команды</h3><p>init-db применяет созданный вами schema.sql и добавляет вымышленного администратора. import-rooms читает JSON и добавляет записи в rooms. Команды запускаются явно, поэтому понятно, когда создаются данные. Повторный импорт добавит дубликаты площадок: выполните его один раз в пустой базе. Импорт допускается только для вашего доверенного учебного JSON.</p></section></div></article><article class="lesson" id="page-11"><p class="eyebrow"></p><h2>Записать данные демонстрационных площадок</h2><div class="blocks"><section class="block code"><h3>Создайте rooms.json</h3><pre>[
+  {&quot;id&quot;: 1, &quot;name&quot;: &quot;Лофт «Балтика»&quot;, &quot;category&quot;: &quot;auditorium&quot;, &quot;city&quot;: &quot;Санкт-Петербург&quot;, &quot;address&quot;: &quot;Кожевенная линия, 30&quot;, &quot;capacity&quot;: 120, &quot;hourly_rate&quot;: 9500, &quot;image&quot;: &quot;&quot;, &quot;description&quot;: &quot;Исторический лофт с двумя экранами и профессиональным звуком.&quot;, &quot;equipment&quot;: &quot;2 экрана, проектор, звук, Wi-Fi&quot;},
+  {&quot;id&quot;: 3, &quot;name&quot;: &quot;Коворкинг «Спектр»&quot;, &quot;category&quot;: &quot;coworking&quot;, &quot;city&quot;: &quot;Казань&quot;, &quot;address&quot;: &quot;ул. Петербургская, 52&quot;, &quot;capacity&quot;: 70, &quot;hourly_rate&quot;: 6100, &quot;image&quot;: &quot;&quot;, &quot;description&quot;: &quot;Гибкое пространство с рабочими зонами и местом для нетворкинга.&quot;, &quot;equipment&quot;: &quot;Wi-Fi, кухня, проектор, мобильная мебель&quot;},
+  {&quot;id&quot;: 5, &quot;name&quot;: &quot;Кинозал «Вектор»&quot;, &quot;category&quot;: &quot;cinema&quot;, &quot;city&quot;: &quot;Нижний Новгород&quot;, &quot;address&quot;: &quot;ул. Рождественская, 18&quot;, &quot;capacity&quot;: 42, &quot;hourly_rate&quot;: 5700, &quot;image&quot;: &quot;&quot;, &quot;description&quot;: &quot;Тихий зал с амфитеатром для видеопоказов и презентаций.&quot;, &quot;equipment&quot;: &quot;Экран, Full HD проектор, 5.1 звук, Wi-Fi&quot;}
+]</pre></section><section class="block text"><h3>Как читать JSON</h3><p>Массив содержит три площадки. category принимает auditorium, coworking или cinema. image пока пуст: изображения мы не скачиваем вместе с приложением. Числа capacity и hourly_rate влияют на сравнение площадок. Измените одну вместимость в своём файле и объясните, как это должно отразиться на карточке.</p></section></div></article><article class="lesson" id="page-12"><p class="eyebrow"></p><h2>Сделать общую оболочку страницы</h2><div class="blocks"><section class="block code"><h3>Создайте templates/base.html</h3><pre>&lt;!doctype html&gt;
+&lt;html lang=&quot;ru&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+  &lt;title&gt;{% block title %}Конференции.РФ{% endblock %}&lt;/title&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#x27;static&#x27;, filename=&#x27;design.css&#x27;) }}&quot;&gt;
+  &lt;script src=&quot;{{ url_for(&#x27;static&#x27;, filename=&#x27;design.js&#x27;) }}&quot; defer&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;a class=&quot;skip-link&quot; href=&quot;#main&quot;&gt;Перейти к содержанию&lt;/a&gt;
+&lt;header class=&quot;site-header&quot;&gt;
+  &lt;a class=&quot;brand&quot; href=&quot;{{ url_for(&#x27;home&#x27;) }}&quot;&gt;Конференции.РФ&lt;/a&gt;
+  &lt;nav aria-label=&quot;Главная навигация&quot;&gt;
+    &lt;a href=&quot;/rooms&quot;&gt;Помещения&lt;/a&gt;
+    {% if g.user %}
+      &lt;a href=&quot;{{ &#x27;/admin&#x27; if g.user.is_admin else &#x27;/dashboard&#x27; }}&quot;&gt;Мои действия&lt;/a&gt;
+      &lt;form action=&quot;/logout&quot; method=&quot;post&quot;&gt;
+        &lt;input type=&quot;hidden&quot; name=&quot;csrf&quot; value=&quot;{{ session.csrf }}&quot;&gt;
+        &lt;button class=&quot;link-button&quot;&gt;Выйти&lt;/button&gt;
+      &lt;/form&gt;
+    {% else %}
+      &lt;a href=&quot;/login&quot;&gt;Войти&lt;/a&gt;
+      &lt;a class=&quot;nav-primary&quot; href=&quot;/register&quot;&gt;Регистрация&lt;/a&gt;
+    {% endif %}
+  &lt;/nav&gt;
+&lt;/header&gt;
+&lt;main id=&quot;main&quot;&gt;{% block content %}{% endblock %}&lt;/main&gt;
+&lt;footer&gt;Конференции.РФ · Учебный пример ПМ.08&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></section><section class="block text"><h3>Разбор структуры</h3><p>lang и viewport задают язык и мобильный масштаб. block title и block content — места для содержимого дочернего шаблона. url_for строит адрес статических файлов. Навигация содержит пути будущих страниц; до реализации маршрутов они дадут 404 — это ожидаемый промежуточный результат. Кнопка выхода отправляет POST с csrf. Skip-link помогает перейти к содержанию клавиатурой.</p></section></div></article><article class="lesson" id="page-13"><p class="eyebrow"></p><h2>Создать главную страницу</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: home</h3><pre>@app.route(&#x27;/&#x27;)
+def home():
+    return render_template(&#x27;home.html&#x27;)
+
+</pre></section><section class="block code"><h3>Создайте templates/home.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% block content %}
+&lt;section class=&quot;hero&quot;&gt;
+  &lt;p class=&quot;eyebrow&quot;&gt;Пространство для вашей идеи&lt;/p&gt;
+  &lt;h1&gt;Найдите площадку для встречи&lt;/h1&gt;
+  &lt;p&gt;Сравните вместимость и оснащение. Выберите помещение и отправьте заявку.&lt;/p&gt;
+  &lt;a class=&quot;button button-primary&quot; href=&quot;/rooms&quot;&gt;Выбрать площадку&lt;/a&gt;
+&lt;/section&gt;
+&lt;section class=&quot;explanation&quot;&gt;
+  &lt;h2&gt;От идеи до события&lt;/h2&gt;
+  &lt;p&gt;Выбор площадки → заявка → назначенное мероприятие → отзыв.&lt;/p&gt;
+  &lt;p&gt;Способ оплаты фиксируется в заявке. Реального платежа в учебном примере нет.&lt;/p&gt;
+&lt;/section&gt;
+{% endblock %}</pre></section><section class="block text"><h3>Почему это решение помогает пользователю</h3><p>extends использует общую оболочку. Главный заголовок объясняет задачу, текст уточняет действие, одна основная кнопка ведёт к выбору площадки. Пока оформление не добавлено, страница выглядит просто; это позволяет сначала проверить смысловую структуру.</p></section></div></article><article class="lesson" id="page-14"><p class="eyebrow"></p><h2>Запустить созданную главную страницу в Windows</h2><div class="blocks"><section class="block code"><h3>Выполните команды PowerShell в папке с app.py</h3><pre>py -3 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-$env:DB_BACKEND=&quot;mysql&quot;
+$env:FLASK_SECRET=&quot;local-learning-secret-change-before-real-use&quot;
 $env:MYSQL_HOST=&quot;127.0.0.1&quot;
 $env:MYSQL_PORT=&quot;3306&quot;
-$env:MYSQL_DATABASE=&quot;pm08_design_2027&quot;
-$env:MYSQL_USER=&quot;pm08_design&quot;
-$env:MYSQL_PASSWORD=&quot;Practice2027Db!&quot;
-.\.venv\Scripts\python.exe -m flask --app app run --port 5017</pre></section><section class="block text"><h3>Проверка запуска</h3><p>Откройте http://127.0.0.1:5017/ . Должна появиться главная страница. Перейдите в «Помещения»: видно шесть площадок. В клиенте MySQL обновите список таблиц. Оставьте терминал сервера открытым; остановка выполняется Ctrl+C. Ошибку соединения ищите в фактических host/port/user/password, а не исправляйте изменением HTML.</p></section></div></article><article class="lesson" id="page-5"><p class="eyebrow"></p><h2>Запустить тот же проект в macOS</h2><div class="blocks"><section class="block text"><h3>macOS: тот же проект и стек</h3><p>Для macOS выполните следующий набор команд вместо PowerShell-команд. Меняется синтаксис терминала, а Python, Flask, MySQL и весь учебный код остаются теми же.</p></section><section class="block code"><h3>Учебный фрагмент: run-macos.sh</h3><pre>python3 -m venv .venv
+$env:MYSQL_DATABASE=&quot;pm08_learning_2027&quot;
+$env:MYSQL_USER=&quot;pm08_learning&quot;
+$env:MYSQL_PASSWORD=&quot;LocalPractice2027!&quot;
+.\.venv\Scripts\python.exe -m flask --app app init-db
+.\.venv\Scripts\python.exe -m flask --app app import-rooms rooms.json
+.\.venv\Scripts\python.exe -m flask --app app run --port 5019</pre></section><section class="block text"><h3>Что проверить</h3><p>Команды выполняются в созданной папке с app.py. Порт MySQL замените фактическим, если он отличается от 3306. Виртуальное окружение отделяет зависимости; прямой путь к Python не требует изменения ExecutionPolicy. Перейдите на http://127.0.0.1:5019/ : виден текст главной. CSS и JS пока дадут 404 — создадим их далее. После остановки Ctrl+C повторно нужны только переменные окружения и последняя команда; импорт не повторяйте.</p></section></div></article><article class="lesson" id="page-15"><p class="eyebrow"></p><h2>Запустить тот же пример в macOS</h2><div class="blocks"><section class="block code"><h3>Выполните команды терминала в папке с app.py</h3><pre>python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-export DB_BACKEND=mysql
+export FLASK_SECRET=local-learning-secret-change-before-real-use
 export MYSQL_HOST=127.0.0.1
 export MYSQL_PORT=3306
-export MYSQL_DATABASE=pm08_design_2027
-export MYSQL_USER=pm08_design
-export MYSQL_PASSWORD=&#x27;Practice2027Db!&#x27;
-.venv/bin/python -m flask --app app run --port 5017</pre></section><section class="block text"><h3>Проверка запуска</h3><p>Откройте http://127.0.0.1:5017/ . Должна появиться главная страница. Перейдите в «Помещения»: видно шесть площадок. В клиенте MySQL обновите список таблиц. Оставьте терминал сервера открытым; остановка выполняется Ctrl+C. Ошибку соединения ищите в фактических host/port/user/password, а не исправляйте изменением HTML.</p></section></div></article><article class="lesson" id="page-6"><p class="eyebrow"></p><h2>Проверить исходный пользовательский сценарий</h2><div class="blocks"><section class="block text"><h3>Обычный пользователь</h3><p>Откройте регистрацию. Для учебной проверки: логин pm08student, пароль Practice2027, подтверждение того же пароля, ФИО «Практика Пользователь», телефон 8(900)123-45-67, почта student@example.test. Это вымышленные данные. Войдите, откройте каталог и выберите помещение. Создайте заявку «Обсуждение дизайна»: будущая дата, 12:00, 10 участников, способ оплаты СБП. После отправки она появляется в «Мои заявки» со статусом «Новая».</p></section><section class="block text"><h3>Администратор и отзыв</h3><p>Выйдите и войдите как Conf2027 / Demo77. Это учебная учётная запись администратора. Найдите заявку, выберите «Мероприятие назначено», сохраните; затем выберите «Завершено», сохраните. Выйдите и войдите как pm08student. Только после завершения доступны оценка и отзыв. Эти действия должны работать до изменения дизайна и после него.</p></section><section class="block text"><h3>Граница сценария</h3><p>Способ оплаты — выбранное значение, реального платежа нет. Приложение не предотвращает все пересечения бронирований. Оформление должно отражать реализованные возможности. Не обещайте оплату или автоматическую гарантию свободного зала.</p></section></div></article><article class="lesson" id="page-7"><p class="eyebrow"></p><h2>Спроектировать страницы и главное действие</h2><div class="blocks"><section class="block text"><h3>Каркас до CSS</h3><p>Нарисуйте простые прямоугольные каркасы: главная — объяснение сервиса и переход в каталог; каталог — фильтры и карточки; регистрация/вход — заголовок, поля и отправка; заявка — выбранная площадка и параметры; кабинет — статус и действия; администратор — поиск и изменение статуса. Расположите элементы в порядке пользовательской задачи, затем сравните каркас с существующими страницами.</p></section><section class="block text"><h3>Палитра и типографика</h3><p>В демонстрации основной синий #0d47a1, текст тёмный, фон светлый, шрифт PT Sans уже подключён локально. Белая подпись на #0d47a1 имеет контраст около 8,6:1. Цвет ошибки #a81727 сопровождается текстом. Базовый интервал 8 px помогает согласовать расстояния. Отдельно обозначьте главное и вторичное действие: «Выбрать» и «Подробнее» не должны одинаково привлекать внимание.</p></section><figure class="block screenshot"><h3>Главная страница учебного примера</h3><img src="assets/screenshots/d044b1214002315e.png" alt="Главная страница учебного примера"><figcaption>Первый экран объясняет назначение сервиса; основная кнопка ведёт к выбору площадки.</figcaption></figure></div></article><article class="lesson" id="page-8"><p class="eyebrow"></p><h2>Подключить собственный слой оформления</h2><div class="blocks"><section class="block text"><h3>Создать файлы</h3><p>В Explorer / Проводник правой кнопкой нажмите static → New File / Новый файл. Создайте design.css, затем design.js. Оба файла сначала пустые. Откройте templates/base.html. Добавьте только две строки подключения из фрагмента в указанные места; поясняющие комментарии переносить необязательно. Сохраните Ctrl+S (macOS Cmd+S).</p></section><section class="block code"><h3>Учебный фрагмент: design-includes.html</h3><pre>&lt;!-- templates/base.html: после подключения css/style.css, внутри &lt;head&gt; --&gt;
-&lt;link rel=&quot;stylesheet&quot; href=&quot;{{ url_for(&#x27;static&#x27;, filename=&#x27;design.css&#x27;) }}&quot;&gt;
+export MYSQL_DATABASE=pm08_learning_2027
+export MYSQL_USER=pm08_learning
+export MYSQL_PASSWORD=&#x27;LocalPractice2027!&#x27;
+.venv/bin/python -m flask --app app init-db
+.venv/bin/python -m flask --app app import-rooms rooms.json
+.venv/bin/python -m flask --app app run --port 5019</pre></section><section class="block text"><h3>Проверка первого результата</h3><p>Это те же Python, Flask и MySQL; отличается синтаксис терминала. На http://127.0.0.1:5019/ виден каркас главной страницы. Если нет соединения с MySQL, проверьте host, port, user и имя БД. FLASK_SECRET здесь демонстрационный для локальной работы; в реальной среде используйте отдельный случайный секрет.</p></section></div></article><article class="lesson" id="page-16"><p class="eyebrow"></p><h2>Выбирать площадки по условиям</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: rooms</h3><pre>@app.route(&#x27;/rooms&#x27;)
+def rooms():
+    filters = {key: request.args.get(key, &#x27;&#x27;).strip() for key in (&#x27;category&#x27;, &#x27;city&#x27;, &#x27;capacity&#x27;)}
+    sql, values = &#x27;SELECT * FROM rooms WHERE 1=1&#x27;, []
+    if filters[&#x27;category&#x27;] in TYPES:
+        sql += &#x27; AND category=%s&#x27;
+        values.append(filters[&#x27;category&#x27;])
+    if filters[&#x27;city&#x27;]:
+        sql += &#x27; AND city=%s&#x27;
+        values.append(filters[&#x27;city&#x27;])
+    if filters[&#x27;capacity&#x27;].isdigit():
+        sql += &#x27; AND capacity&gt;=%s&#x27;
+        values.append(int(filters[&#x27;capacity&#x27;]))
+    rows = query(sql + &#x27; ORDER BY hourly_rate, id&#x27;, tuple(values))
+    return render_template(&#x27;rooms.html&#x27;, rooms=rows, filters=filters)
 
-&lt;!-- templates/base.html: после js/app.js, перед закрывающим &lt;/body&gt; --&gt;
-&lt;script src=&quot;{{ url_for(&#x27;static&#x27;, filename=&#x27;design.js&#x27;) }}&quot; defer&gt;&lt;/script&gt;</pre></section><section class="block text"><h3>Почему именно так</h3><p>base.html используется всеми страницами, поэтому общий дизайн подключается один раз. url_for строит правильный адрес статического файла. CSS расположен после исходного оформления: равные по специфичности правила ниже имеют приоритет. defer запускает JavaScript после разбора HTML. Не заменяйте исходные css/style.css и js/app.js: в них уже работают сетки, меню и маска телефона.</p></section><section class="block text"><h3>Проверка подключения</h3><p>Откройте инструменты разработчика F12 (macOS Cmd+Option+I), вкладку Network / Сеть, обновите страницу. design.css и design.js должны иметь статус 200. Пока файлы пустые, вид не меняется. 404 означает неверное имя или расположение; синтаксическая ошибка JavaScript появится в Console.</p></section></div></article><article class="lesson" id="page-9"><p class="eyebrow"></p><h2>Задать общие цвета и интервал</h2><div class="blocks"><section class="block text"><h3>Место и смысл изменения</h3><p>Начните пустой static/design.css с блока :root. CSS-переменные хранят общие значения; сами по себе они ещё не перекрашивают элементы. Акцент нужен главному действию и фокусу, цвет ошибки — неверному полю, интервал — согласованным расстояниям.</p></section><section class="block code"><h3>Добавьте в static/design.css после предыдущего блока</h3><pre>/* Дизайн ПМ.08: добавляйте блоки в указанном порядке. */
-:root {
-  --design-accent: #0d47a1;
-  --design-text: #162b48;
-  --design-error: #a81727;
-  --design-space: 8px;
-}
-</pre></section><section class="block text"><h3>Проверка результата</h3><p>В Elements выберите body и в Computed найдите --design-accent. Значение #0d47a1 подтверждает загрузку файла; заметное изменение появится после следующего блока.</p></section></div></article><article class="lesson" id="page-10"><p class="eyebrow"></p><h2>Выделить главное действие и клавиатурный фокус</h2><div class="blocks"><section class="block text"><h3>Место и смысл изменения</h3><p>Добавьте блок после :root. .button-primary и .nav-primary обозначают основные действия. :not(.link-button) сохраняет текстовый вид кнопки выхода. min-height: 44px увеличивает область нажатия. :focus-visible показывает фокус при навигации клавиатурой.</p></section><section class="block code"><h3>Добавьте в static/design.css после предыдущего блока</h3><pre>/* Основное действие отличается от текста и имеет контрастную подпись. */
-.button-primary, .nav-primary, button[type=&quot;submit&quot;]:not(.link-button) {
-  background-color: var(--design-accent);
-  color: #fff;
-  min-height: 44px;
-}
-a, button, input, select, textarea { touch-action: manipulation; }
-:focus-visible {
-  outline: 3px solid var(--design-accent);
-  outline-offset: 4px;
-}
-</pre></section><section class="block text"><h3>Проверка результата</h3><p>В каталоге «Выбрать» заметнее, чем «Подробнее». Пройдите элементы Tab и Shift+Tab: фокус различим. Enter активирует выбранную кнопку/ссылку. Откройте меню и убедитесь, что «Выйти» не превратилось в главное действие.</p></section></div></article><article class="lesson" id="page-11"><p class="eyebrow"></p><h2>Оформить подсказку, поля и ошибку</h2><div class="blocks"><section class="block text"><h3>Место и смысл изменения</h3><p>Добавьте следующий блок. .design-summary — оформление будущей подсказки; пока JavaScript не создан, она не появится. calc использует общий интервал. .field-error оформляет уже имеющийся текст ошибки. aria-invalid добавим после серверной проверки. Радиокнопки оценки визуально скрыты, но доступны клавиатуре; фокус выделяет их видимую метку.</p></section><section class="block code"><h3>Добавьте в static/design.css после предыдущего блока</h3><pre>/* Формы: подсказка и ошибка сопровождают поле, а не только цвет. */
-.design-summary {
-  margin: 0 0 calc(2 * var(--design-space));
-  padding: 12px calc(2 * var(--design-space));
-  border-left: 4px solid var(--design-accent);
-  border-radius: 8px;
-  background: #e9f0fa;
-  color: var(--design-text);
-  font-size: 14px;
-}
-.design-summary strong { display: block; margin-bottom: 4px; }
-[aria-invalid=&quot;true&quot;] { border: 2px solid var(--design-error); }
-.field-error { color: var(--design-error); }
-.rating-options input { width: 1px; height: 1px; clip-path: inset(50%); }
-.rating-options input:focus-visible + label { outline: 3px solid var(--design-accent); }
-input, select, textarea { min-height: 44px; }
-</pre></section><section class="block text"><h3>Проверка результата</h3><p>Откройте регистрацию и отправьте пустую форму. Прочитайте текст ошибок. Поля остаются доступными, метки и имена не меняются. После добавления JavaScript вернитесь к этой проверке: появятся рамка ошибочного поля и подсказка заполнения.</p></section></div></article><article class="lesson" id="page-12"><p class="eyebrow"></p><h2>Удержать карточку и длинное название в сетке</h2><div class="blocks"><section class="block text"><h3>Место и смысл изменения</h3><p>Продолжите design.css блоком карточек. overflow-wrap позволяет переносить длинное название внутри карточки. aspect-ratio резервирует место изображения, object-fit: cover заполняет его с возможным обрезанием краёв. align-items: stretch выравнивает высоту карточек в строке.</p></section><section class="block code"><h3>Добавьте в static/design.css после предыдущего блока</h3><pre>/* Карточки сохраняют форму при длинных названиях. */
-.room-card h3, .application-card h3 {
-  overflow-wrap: anywhere;
-}
-.room-card-image img {
-  object-fit: cover;
-  aspect-ratio: 16 / 10;
-}
-.room-grid { align-items: stretch; }
-</pre></section><section class="block text"><h3>Проверка результата</h3><p>Откройте каталог на широком экране. Картинки имеют одинаковое соотношение сторон. Проверьте, что смысловой объект виден после обрезания. В своём каталоге испытайте длинное название: оно не должно выходить в соседнюю колонку.</p></section></div></article><article class="lesson" id="page-13"><p class="eyebrow"></p><h2>Перестроить интерфейс для мобильного экрана</h2><div class="blocks"><section class="block text"><h3>Место и смысл изменения</h3><p>Добавьте media query: правила действуют до 600 px. Каталог становится одноколоночным, отступы формы уменьшаются. minmax(0, 1fr) допускает сжатие колонки. Мы меняем компоновку, а не маскируем ошибку через overflow-x: hidden.</p></section><section class="block code"><h3>Добавьте в static/design.css после предыдущего блока</h3><pre>/* Узкий экран: ничего не скрываем ради устранения переполнения. */
-@media (max-width: 600px) {
-  .form-card { padding: 20px; }
-  .room-grid { grid-template-columns: minmax(0, 1fr); }
-  .design-summary { padding: 12px; }
-  .filter-panel input, .filter-panel select { max-width: 100%; }
-  h1 { overflow-wrap: anywhere; }
-}
-</pre></section><section class="block text"><h3>Проверка результата</h3><p>В DevTools включите Device toolbar / Панель устройств, Responsive, ширину 390 и высоту 844. Просмотрите каждую страницу, включая вход, заявку, кабинет и администратора. Затем верните широкий экран: каталог снова многоколоночный.</p></section></div></article><article class="lesson" id="page-14"><p class="eyebrow"></p><h2>Добавить короткую обратную связь без лишнего движения</h2><div class="blocks"><section class="block text"><h3>Место и смысл изменения</h3><p>Завершите design.css. Подсказка появляется с небольшой анимацией. Системное предпочтение prefers-reduced-motion: reduce отключает движение и переходы. Это улучшение не меняет отправку формы и не откладывает доступность полей.</p></section><section class="block code"><h3>Добавьте в static/design.css после предыдущего блока</h3><pre>/* Анимация обратной связи не мешает читать и вводить данные. */
-.design-summary { animation: design-appear .18s ease-out; }
-@keyframes design-appear {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
-  }
-}</pre></section><section class="block text"><h3>Проверка результата</h3><p>После подключения JavaScript обновите регистрацию и увидите появление подсказки. В DevTools → More tools → Rendering включите prefers-reduced-motion: reduce. Подсказка остаётся видимой и работоспособной, но движение исчезает.</p></section></div></article><article class="lesson" id="page-15"><p class="eyebrow"></p><h2>Понять связь формы, Flask и сообщения ошибки</h2><div class="blocks"><section class="block text"><h3>Разбор существующей регистрации</h3><p>Откройте templates/register.html и найдите группу логина внутри .stack-form. Ниже приведён её фрагмент с переносами для чтения; он уже есть в основе, повторно вставлять его не нужно. for/id связывают подпись с полем, name=&quot;username&quot; соответствует ключу request.form в Python, values.username сохраняет исправляемый ввод. errors приходит от Flask после POST. Выражения {{ ... }} подставляют данные, {% if ... %} выводит сообщение только при ошибке.</p></section><section class="block code"><h3>Учебный фрагмент: username-field.html</h3><pre>&lt;div class=&quot;field {% if errors.get(&#x27;username&#x27;) %}has-error{% endif %}&quot;&gt;
-  &lt;label for=&quot;username&quot;&gt;Логин &lt;span&gt;*&lt;/span&gt;&lt;/label&gt;
-  &lt;input id=&quot;username&quot; name=&quot;username&quot; value=&quot;{{ values.username }}&quot;
-         required minlength=&quot;6&quot; pattern=&quot;[A-Za-z0-9]+&quot;
-         autocomplete=&quot;username&quot;
-         aria-describedby=&quot;username-hint{% if errors.get(&#x27;username&#x27;) %} username-error{% endif %}&quot;&gt;
-  &lt;small id=&quot;username-hint&quot;&gt;Латиница и цифры, не менее 6 символов&lt;/small&gt;
-  {% if errors.get(&#x27;username&#x27;) %}
-    &lt;span class=&quot;field-error&quot; id=&quot;username-error&quot;&gt;{{ errors.username }}&lt;/span&gt;
+</pre></section><section class="block text"><h3>Разбор запроса</h3><p>Фильтр использует GET: выбранные условия видны в URL. Python добавляет только известные условия, значения передаются параметрами. Сортировка по цене и id даёт предсказуемый порядок. render_template передаёт список rooms и введённые filters в HTML.</p></section><section class="block text"><h3>Промежуточная проверка</h3><p>Сохраните app.py, остановите и снова запустите сервер последней командой. Не запускайте init-db и импорт повторно. Страница /rooms заработает после создания двух следующих шаблонов.</p></section></div></article><article class="lesson" id="page-17"><p class="eyebrow"></p><h2>Показать фильтр, список и пустой результат</h2><div class="blocks"><section class="block code"><h3>Создайте templates/rooms.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% block title %}Каталог — Конференции.РФ{% endblock %}
+{% block content %}
+&lt;h1&gt;Помещения для вашей конференции&lt;/h1&gt;
+&lt;form class=&quot;filter-panel&quot; method=&quot;get&quot;&gt;
+  &lt;label&gt;Тип &lt;select name=&quot;category&quot;&gt;&lt;option value=&quot;&quot;&gt;Все типы&lt;/option&gt;
+    {% for key,label in types.items() %}&lt;option value=&quot;{{ key }}&quot; {% if filters.category==key %}selected{% endif %}&gt;{{ label }}&lt;/option&gt;{% endfor %}
+  &lt;/select&gt;&lt;/label&gt;
+  &lt;label&gt;Город &lt;input name=&quot;city&quot; value=&quot;{{ filters.city }}&quot;&gt;&lt;/label&gt;
+  &lt;label&gt;Не менее мест &lt;input type=&quot;number&quot; min=&quot;1&quot; name=&quot;capacity&quot; value=&quot;{{ filters.capacity }}&quot;&gt;&lt;/label&gt;
+  &lt;button class=&quot;button-primary&quot;&gt;Показать&lt;/button&gt;
+  &lt;a href=&quot;{{ url_for(&#x27;rooms&#x27;) }}&quot;&gt;Сбросить&lt;/a&gt;
+&lt;/form&gt;
+&lt;p role=&quot;status&quot;&gt;Найдено: {{ rooms|length }}&lt;/p&gt;
+&lt;div class=&quot;room-grid&quot;&gt;
+  {% for room in rooms %}{% include &#x27;_room_card.html&#x27; %}{% else %}
+    &lt;section class=&quot;empty-state&quot;&gt;&lt;h2&gt;Подходящих помещений не нашлось&lt;/h2&gt;
+      &lt;p&gt;Измените условия или &lt;a href=&quot;{{ url_for(&#x27;rooms&#x27;) }}&quot;&gt;сбросьте фильтры&lt;/a&gt;.&lt;/p&gt;
+    &lt;/section&gt;
+  {% endfor %}
+&lt;/div&gt;
+{% endblock %}</pre></section><section class="block text"><h3>Связь кода и состояния</h3><p>Имена category, city, capacity совпадают с request.args. Атрибут selected сохраняет тип, value — город и вместимость. for выводит карточки; else показывает понятный пустой результат. Это не ошибка базы: запрос успешно выполнен, но записи не подошли.</p></section></div></article><article class="lesson" id="page-18"><p class="eyebrow"></p><h2>Создать карточку площадки</h2><div class="blocks"><section class="block code"><h3>Создайте templates/_room_card.html</h3><pre>&lt;article class=&quot;room-card&quot;&gt;
+  {% if room.image %}
+    &lt;img src=&quot;{{ url_for(&#x27;static&#x27;, filename=room.image) }}&quot; alt=&quot;{{ room.name }}&quot;&gt;
+  {% else %}
+    &lt;div class=&quot;room-placeholder&quot; aria-hidden=&quot;true&quot;&gt;{{ types[room.category] }}&lt;/div&gt;
   {% endif %}
-&lt;/div&gt;</pre></section><section class="block text"><h3>Почему сервер проверяет ввод</h3><p>required и pattern помогают описать поле, но не заменяют серверную проверку. Исходная форма имеет novalidate, чтобы демонстрировать единые сообщения Flask. Скрытый _csrf_token связывает отправку с сессией. Не меняйте name, method=&quot;post&quot; и CSRF ради внешнего вида. Ошибка должна быть понятна по тексту, а aria-describedby связывает подсказку и ошибку с конкретным полем.</p></section></div></article><article class="lesson" id="page-16"><p class="eyebrow"></p><h2>Показать заполнение обязательных полей</h2><div class="blocks"><section class="block text"><h3>Что пишем в JavaScript</h3><p>В пустой static/design.js введите первый блок. .stack-form выбирает основную форму, а required отделяет обязательные поля. hidden исключает CSRF. У радиокнопок одного name общий ответ: считаем группу один раз. Создаём текстовые элементы безопасно через textContent, помещаем подсказку перед полями и обновляем её на input/change.</p></section><section class="block code"><h3>Первый блок static/design.js</h3><pre>// ПМ.08: подсказка сопровождает основную форму, сервер проверяет данные.
+  &lt;div class=&quot;room-card-body&quot;&gt;
+    &lt;p class=&quot;eyebrow&quot;&gt;{{ room.city }} · {{ types[room.category] }}&lt;/p&gt;
+    &lt;h2&gt;{{ room.name }}&lt;/h2&gt;&lt;p&gt;{{ room.description }}&lt;/p&gt;
+    {% if room.equipment %}&lt;p&gt;Оснащение: {{ room.equipment }}&lt;/p&gt;{% endif %}
+    &lt;p&gt;До {{ room.capacity }} человек · {{ room.hourly_rate }} руб./ч&lt;/p&gt;
+    &lt;a class=&quot;button button-primary&quot; href=&quot;{{ &#x27;/apply/&#x27; ~ room.id if g.user else &#x27;/login&#x27; }}&quot;&gt;Выбрать&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</pre></section><section class="block text"><h3>Почему карточка устроена так</h3><p>Сначала пользователь считывает тип и город, затем название, описание, оснащение и стоимость. Главное действие — «Выбрать». Пустой image заменяем типографической заглушкой; фотографию можно добавить самостоятельно в static/img и указать относительный путь. Jinja экранирует текст, поэтому не применяйте |safe к данным.</p></section><section class="block text"><h3>Проверка</h3><p>Перезапустите сервер. /rooms показывает три записи. Отфильтруйте тип, затем вместимость 1000: появляется сообщение и сброс. Вводите реальный город из JSON; в этом учебном решении он сопоставляется точно.</p></section></div></article><article class="lesson" id="page-19"><p class="eyebrow"></p><h2>Создать единый компонент поля формы</h2><div class="blocks"><section class="block code"><h3>Создайте templates/_field.html</h3><pre>{% macro field(name,label,type=&#x27;text&#x27;,hint=&#x27;&#x27;,required=true) %}
+&lt;div class=&quot;field&quot;&gt;
+  &lt;label for=&quot;{{ name }}&quot;&gt;{{ label }}{% if required %} *{% endif %}&lt;/label&gt;
+  &lt;input id=&quot;{{ name }}&quot; name=&quot;{{ name }}&quot; type=&quot;{{ type }}&quot;
+         value=&quot;{{ &#x27;&#x27; if type==&#x27;password&#x27; else values.get(name,&#x27;&#x27;) }}&quot;
+         {% if required %}required{% endif %}
+         aria-describedby=&quot;{{ name }}-hint{% if errors.get(name) %} {{ name }}-error{% endif %}&quot;&gt;
+  &lt;small id=&quot;{{ name }}-hint&quot;&gt;{{ hint }}&lt;/small&gt;
+  {% if errors.get(name) %}&lt;span class=&quot;field-error&quot; id=&quot;{{ name }}-error&quot;&gt;{{ errors[name] }}&lt;/span&gt;{% endif %}
+&lt;/div&gt;
+{% endmacro %}</pre></section><section class="block text"><h3>Для чего нужен macro</h3><p>field повторно использует одну структуру: подпись, поле, подсказка, ошибка. for совпадает с id; name передаёт значение Flask. values сохраняет введённый текст после ошибки. Пароль специально не возвращается в HTML. aria-describedby связывает подсказку и сообщение с полем. Это компонент интерфейса, который предотвращает различия между одинаковыми полями.</p></section></div></article><article class="lesson" id="page-20"><p class="eyebrow"></p><h2>Проверить регистрацию на сервере</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: register</h3><pre>@app.route(&#x27;/register&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])
+def register():
+    values = request.form if request.method == &#x27;POST&#x27; else {}
+    errors = {}
+    if request.method == &#x27;POST&#x27;:
+        rules = {&#x27;username&#x27;: (r&#x27;[A-Za-z0-9]{6,30}&#x27;, &#x27;Латиница и цифры: 6–30 символов.&#x27;),
+                 &#x27;full_name&#x27;: (r&#x27;[А-Яа-яЁё]+(?: [А-Яа-яЁё]+)+&#x27;, &#x27;Укажите ФИО кириллицей.&#x27;),
+                 &#x27;phone&#x27;: (r&#x27;8\(\d{3}\)\d{3}-\d{2}-\d{2}&#x27;, &#x27;Формат: 8(XXX)XXX-XX-XX.&#x27;),
+                 &#x27;email&#x27;: (r&#x27;[^\s@]+@[^\s@]+\.[^\s@]+&#x27;, &#x27;Укажите адрес почты.&#x27;)}
+        for key, (pattern, message) in rules.items():
+            if not re.fullmatch(pattern, values.get(key, &#x27;&#x27;)):
+                errors[key] = message
+        password = values.get(&#x27;password&#x27;, &#x27;&#x27;)
+        if not 8 &lt;= len(password) &lt;= 128:
+            errors[&#x27;password&#x27;] = &#x27;Пароль: от 8 до 128 символов.&#x27;
+        if values.get(&#x27;confirm&#x27;) != password:
+            errors[&#x27;confirm&#x27;] = &#x27;Пароли не совпадают.&#x27;
+        if not errors:
+            try:
+                query(&#x27;INSERT INTO users (username,full_name,phone,email,password_hash) VALUES (%s,%s,%s,%s,%s)&#x27;,
+                      tuple(values[k] for k in rules) + (generate_password_hash(password),), write=True)
+                return redirect(url_for(&#x27;login&#x27;))
+            except pymysql.err.IntegrityError:
+                errors[&#x27;username&#x27;] = &#x27;Такой логин или адрес почты уже используется.&#x27;
+    return render_template(&#x27;register.html&#x27;, values=values, errors=errors)
+
+</pre></section><section class="block text"><h3>Разбор</h3><p>Правила проверяют каждое поле и заполняют словарь errors. Пароль должен иметь 8–128 символов, подтверждение совпасть. INSERT выполняется только при отсутствии ошибок; пароль хешируется. Уникальность окончательно проверяет MySQL. При ошибке снова выводим форму с values и errors, при успехе перенаправляем на вход.</p></section></div></article><article class="lesson" id="page-21"><p class="eyebrow"></p><h2>Создать страницу регистрации</h2><div class="blocks"><section class="block code"><h3>Создайте templates/register.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% from &#x27;_field.html&#x27; import field with context %}
+{% block title %}Регистрация — Конференции.РФ{% endblock %}
+{% block content %}
+&lt;section class=&quot;form-card&quot;&gt;&lt;h1&gt;Создайте учётную запись&lt;/h1&gt;&lt;p&gt;Все поля обязательны.&lt;/p&gt;
+&lt;form method=&quot;post&quot; class=&quot;stack-form&quot; novalidate&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;csrf&quot; value=&quot;{{ session.csrf }}&quot;&gt;
+  {{ field(&#x27;username&#x27;,&#x27;Логин&#x27;,hint=&#x27;Латиница и цифры: 6–30 символов&#x27;) }}
+  {{ field(&#x27;full_name&#x27;,&#x27;ФИО&#x27;,hint=&#x27;Кириллица и пробелы&#x27;) }}
+  {{ field(&#x27;phone&#x27;,&#x27;Телефон&#x27;,hint=&#x27;8(XXX)XXX-XX-XX&#x27;) }}
+  {{ field(&#x27;email&#x27;,&#x27;Электронная почта&#x27;,&#x27;email&#x27;) }}
+  {{ field(&#x27;password&#x27;,&#x27;Пароль&#x27;,&#x27;password&#x27;,&#x27;От 8 до 128 символов&#x27;) }}
+  {{ field(&#x27;confirm&#x27;,&#x27;Повторите пароль&#x27;,&#x27;password&#x27;) }}
+  &lt;button class=&quot;button-primary&quot;&gt;Создать пользователя&lt;/button&gt;
+&lt;/form&gt;&lt;/section&gt;
+{% endblock %}</pre></section><section class="block text"><h3>Связь формы и Python</h3><p>with context передаёт компоненту values и errors. Шесть вызовов field создают шесть обязательных полей. novalidate позволяет увидеть единые серверные сообщения: атрибут required остаётся описанием обязательности. csrf не входит в пользовательский счётчик.</p></section><section class="block text"><h3>Проверка</h3><p>Перезапустите сервер, отправьте пустую регистрацию: под неверными полями появляется текст. После реализации входа и кабинета зарегистрируйте pm08student / Practice2027, ФИО «Практика Пользователь», телефон 8(900)123-45-67, почта student@example.test. Эти данные вымышленные.</p></section></div></article><article class="lesson" id="page-22"><p class="eyebrow"></p><h2>Реализовать вход и выход</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: login</h3><pre>@app.route(&#x27;/login&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])
+def login():
+    errors = {}
+    if request.method == &#x27;POST&#x27;:
+        user = query(&#x27;SELECT * FROM users WHERE username=%s&#x27;, (request.form.get(&#x27;username&#x27;, &#x27;&#x27;),), one=True)
+        if user and check_password_hash(user[&#x27;password_hash&#x27;], request.form.get(&#x27;password&#x27;, &#x27;&#x27;)):
+            session.clear()
+            session[&#x27;user_id&#x27;] = user[&#x27;id&#x27;]
+            return redirect(url_for(&#x27;admin&#x27; if user[&#x27;is_admin&#x27;] else &#x27;dashboard&#x27;))
+        errors[&#x27;password&#x27;] = &#x27;Логин или пароль неверны.&#x27;
+    return render_template(&#x27;login.html&#x27;, errors=errors, values={})
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: logout</h3><pre>@app.post(&#x27;/logout&#x27;)
+def logout():
+    session.clear()
+    return redirect(url_for(&#x27;home&#x27;))
+
+</pre></section><section class="block code"><h3>Создайте templates/login.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% from &#x27;_field.html&#x27; import field with context %}
+{% block title %}Вход — Конференции.РФ{% endblock %}
+{% block content %}
+&lt;section class=&quot;form-card&quot;&gt;&lt;h1&gt;Войти в сервис&lt;/h1&gt;
+&lt;form method=&quot;post&quot; class=&quot;stack-form&quot; novalidate&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;csrf&quot; value=&quot;{{ session.csrf }}&quot;&gt;
+  {{ field(&#x27;username&#x27;,&#x27;Логин&#x27;) }}{{ field(&#x27;password&#x27;,&#x27;Пароль&#x27;,&#x27;password&#x27;) }}
+  &lt;button class=&quot;button-primary&quot;&gt;Войти&lt;/button&gt;
+&lt;/form&gt;&lt;/section&gt;
+{% endblock %}</pre></section><section class="block text"><h3>Почему это решение корректнее сравнения паролей</h3><p>check_password_hash сравнивает введённый пароль с хешем. При входе старая сессия очищается; в новой хранится только id. Администратор направляется в панель, пользователь — в кабинет. Logout выполняется через POST; следующий запрос создаст новый csrf. Кабинет реализуем ниже.</p></section></div></article><article class="lesson" id="page-23"><p class="eyebrow"></p><h2>Проверить заявку и сохранить её</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: apply</h3><pre>@app.route(&#x27;/apply/&lt;int:room_id&gt;&#x27;, methods=[&#x27;GET&#x27;, &#x27;POST&#x27;])
+def apply(room_id):
+    require_user()
+    room = query(&#x27;SELECT * FROM rooms WHERE id=%s&#x27;, (room_id,), one=True)
+    if not room:
+        abort(404)
+    values, errors = request.form if request.method == &#x27;POST&#x27; else {}, {}
+    if request.method == &#x27;POST&#x27;:
+        if not 3 &lt;= len(values.get(&#x27;event_name&#x27;, &#x27;&#x27;).strip()) &lt;= 120:
+            errors[&#x27;event_name&#x27;] = &#x27;Название: 3–120 символов.&#x27;
+        try:
+            if date.fromisoformat(values.get(&#x27;event_date&#x27;, &#x27;&#x27;)) &lt; date.today():
+                raise ValueError
+        except ValueError:
+            errors[&#x27;event_date&#x27;] = &#x27;Укажите сегодняшнюю или будущую дату.&#x27;
+        if not re.fullmatch(r&#x27;(?:[01]\d|2[0-3]):[0-5]\d&#x27;, values.get(&#x27;event_time&#x27;, &#x27;&#x27;)):
+            errors[&#x27;event_time&#x27;] = &#x27;Укажите время.&#x27;
+        if not values.get(&#x27;participants&#x27;, &#x27;&#x27;).isdigit() or not 1 &lt;= int(values.get(&#x27;participants&#x27;, &#x27;0&#x27;)) &lt;= room[&#x27;capacity&#x27;]:
+            errors[&#x27;participants&#x27;] = &#x27;Число участников должно соответствовать вместимости.&#x27;
+        if values.get(&#x27;payment&#x27;) not in (&#x27;Карта&#x27;, &#x27;СБП&#x27;, &#x27;Наличные&#x27;):
+            errors[&#x27;payment&#x27;] = &#x27;Выберите способ оплаты.&#x27;
+        if not errors:
+            query(&#x27;INSERT INTO applications (user_id,room_id,event_name,event_date,event_time,participants,payment) VALUES (%s,%s,%s,%s,%s,%s,%s)&#x27;,
+                  (g.user[&#x27;id&#x27;], room_id, values[&#x27;event_name&#x27;].strip(), values[&#x27;event_date&#x27;], values[&#x27;event_time&#x27;], int(values[&#x27;participants&#x27;]), values[&#x27;payment&#x27;]), write=True)
+            return redirect(url_for(&#x27;dashboard&#x27;))
+    return render_template(&#x27;apply.html&#x27;, room=room, values=values, errors=errors)
+
+</pre></section><section class="block text"><h3>Что обеспечивает сервер</h3><p>room_id определяет площадку и её вместимость. Проверяем название, дату, время, число участников и оплату; чужой user_id из формы не принимаем, используем g.user.id. При ошибке возвращаем форму с объяснением, при успехе показываем кабинет. Оплата — значение заявки, реального платежа нет.</p></section></div></article><article class="lesson" id="page-24"><p class="eyebrow"></p><h2>Создать интерфейс заявки</h2><div class="blocks"><section class="block code"><h3>Создайте templates/apply.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% from &#x27;_field.html&#x27; import field with context %}
+{% block title %}Заявка — Конференции.РФ{% endblock %}
+{% block content %}
+&lt;section class=&quot;form-card&quot;&gt;&lt;h1&gt;Заявка: {{ room.name }}&lt;/h1&gt;&lt;p&gt;До {{ room.capacity }} участников.&lt;/p&gt;
+&lt;form method=&quot;post&quot; class=&quot;stack-form&quot; novalidate&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;csrf&quot; value=&quot;{{ session.csrf }}&quot;&gt;
+  {{ field(&#x27;event_name&#x27;,&#x27;Название мероприятия&#x27;,hint=&#x27;3–120 символов&#x27;) }}
+  {{ field(&#x27;event_date&#x27;,&#x27;Дата&#x27;,&#x27;date&#x27;) }}{{ field(&#x27;event_time&#x27;,&#x27;Время&#x27;,&#x27;time&#x27;) }}
+  {{ field(&#x27;participants&#x27;,&#x27;Участники&#x27;,&#x27;number&#x27;) }}
+  &lt;div class=&quot;field&quot;&gt;&lt;label for=&quot;payment&quot;&gt;Способ оплаты *&lt;/label&gt;
+    &lt;select id=&quot;payment&quot; name=&quot;payment&quot; required&gt;
+      &lt;option value=&quot;&quot;&gt;Выберите&lt;/option&gt;
+      {% for item in [&#x27;Карта&#x27;,&#x27;СБП&#x27;,&#x27;Наличные&#x27;] %}&lt;option {% if values.get(&#x27;payment&#x27;)==item %}selected{% endif %}&gt;{{ item }}&lt;/option&gt;{% endfor %}
+    &lt;/select&gt;
+    {% if errors.payment %}&lt;span class=&quot;field-error&quot;&gt;{{ errors.payment }}&lt;/span&gt;{% endif %}
+  &lt;/div&gt;
+  &lt;button class=&quot;button-primary&quot;&gt;Отправить заявку&lt;/button&gt;
+&lt;/form&gt;&lt;/section&gt;
+{% endblock %}</pre></section><section class="block text"><h3>Почему такой порядок полей</h3><p>Заголовок подтверждает выбранную площадку. Далее вводятся название, дата, время, число людей и способ оплаты. Компонент field делает оформление и ошибки такими же, как в регистрации. Select оплаты начинается с явного «Выберите». Здесь пять обязательных ответов.</p></section><section class="block text"><h3>Проверка</h3><p>После создания кабинета войдите как пользователь, выберите площадку и отправьте заявку с числом участников больше вместимости. Исправьте ошибку и повторите. До реализации кабинета успешный POST не проверяйте.</p></section></div></article><article class="lesson" id="page-25"><p class="eyebrow"></p><h2>Показать пользователю его заявки</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: dashboard</h3><pre>@app.route(&#x27;/dashboard&#x27;)
+def dashboard():
+    require_user()
+    rows = query(&#x27;SELECT a.*,r.name AS room_name,v.rating,v.comment FROM applications a JOIN rooms r ON r.id=a.room_id LEFT JOIN reviews v ON v.application_id=a.id WHERE a.user_id=%s ORDER BY a.id DESC&#x27;, (g.user[&#x27;id&#x27;],))
+    return render_template(&#x27;dashboard.html&#x27;, applications=rows)
+
+</pre></section><section class="block code"><h3>Создайте templates/dashboard.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% block content %}
+&lt;h1&gt;Мои заявки&lt;/h1&gt;
+{% for item in applications %}
+&lt;article class=&quot;application-card&quot;&gt;
+  &lt;h2&gt;{{ item.event_name }}&lt;/h2&gt;&lt;p&gt;{{ item.room_name }} · {{ item.event_date }} {{ item.event_time }}&lt;/p&gt;
+  &lt;p class=&quot;status&quot;&gt;{{ item.status }}&lt;/p&gt;
+  {% if item.rating %}&lt;p&gt;Ваш отзыв: {{ item.rating }}/5 — {{ item.comment }}&lt;/p&gt;
+  {% elif item.status==&#x27;Завершено&#x27; %}
+  &lt;form method=&quot;post&quot; action=&quot;{{ url_for(&#x27;review&#x27;, application_id=item.id) }}&quot;&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;csrf&quot; value=&quot;{{ session.csrf }}&quot;&gt;
+    &lt;label&gt;Оценка &lt;select name=&quot;rating&quot;&gt;{% for n in range(1,6) %}&lt;option&gt;{{ n }}&lt;/option&gt;{% endfor %}&lt;/select&gt;&lt;/label&gt;
+    &lt;label&gt;Отзыв &lt;textarea name=&quot;comment&quot; required maxlength=&quot;500&quot;&gt;&lt;/textarea&gt;&lt;/label&gt;
+    &lt;button class=&quot;button-primary&quot;&gt;Сохранить отзыв&lt;/button&gt;
+  &lt;/form&gt;
+  {% endif %}
+&lt;/article&gt;
+{% else %}&lt;p&gt;Заявок пока нет. &lt;a href=&quot;{{ url_for(&#x27;rooms&#x27;) }}&quot;&gt;Выберите площадку&lt;/a&gt;.&lt;/p&gt;{% endfor %}
+{% endblock %}</pre></section><section class="block text"><h3>Приватность и понятный статус</h3><p>WHERE a.user_id ограничивает список текущим пользователем. JOIN добавляет название площадки, LEFT JOIN — возможный отзыв. Статус показывается текстом. Отзыв появляется только после завершения; это условие интерфейса дополнительно проверяется сервером.</p></section><section class="block text"><h3>Проверка</h3><p>Теперь можно пройти регистрацию, вход, выбор площадки и успешную заявку. В кабинете видна только своя запись со статусом «Новая». Пустое состояние даёт переход в каталог.</p></section></div></article><article class="lesson" id="page-26"><p class="eyebrow"></p><h2>Отделить роль администратора</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: admin</h3><pre>@app.route(&#x27;/admin&#x27;)
+def admin():
+    require_user(admin=True)
+    rows = query(&#x27;SELECT a.*,r.name AS room_name,u.full_name FROM applications a JOIN rooms r ON r.id=a.room_id JOIN users u ON u.id=a.user_id ORDER BY a.id DESC&#x27;)
+    return render_template(&#x27;admin.html&#x27;, applications=rows)
+
+</pre></section><section class="block code"><h3>Добавьте в app.py: change_status</h3><pre>@app.post(&#x27;/status/&lt;int:application_id&gt;&#x27;)
+def change_status(application_id):
+    require_user(admin=True)
+    row = query(&#x27;SELECT status FROM applications WHERE id=%s&#x27;, (application_id,), one=True)
+    if not row:
+        abort(404)
+    next_status = request.form.get(&#x27;status&#x27;, &#x27;&#x27;)
+    current = STATUSES.index(row[&#x27;status&#x27;])
+    if current == 2 or next_status != STATUSES[current + 1]:
+        abort(400, &#x27;Допустим только следующий статус.&#x27;)
+    query(&#x27;UPDATE applications SET status=%s WHERE id=%s&#x27;, (next_status, application_id), write=True)
+    return redirect(url_for(&#x27;admin&#x27;))
+
+</pre></section><section class="block text"><h3>Почему недостаточно скрыть кнопку</h3><p>require_user(admin=True) проверяет роль на сервере при просмотре и изменении. Разрешён только следующий статус: Новая → Мероприятие назначено → Завершено. Чужой URL и неверное значение статуса не обходят проверку. Обычный пользователь получает 403 на /admin.</p></section></div></article><article class="lesson" id="page-27"><p class="eyebrow"></p><h2>Создать панель изменения статуса</h2><div class="blocks"><section class="block code"><h3>Создайте templates/admin.html</h3><pre>{% extends &#x27;base.html&#x27; %}
+{% block content %}
+&lt;h1&gt;Панель администратора&lt;/h1&gt;
+{% for item in applications %}
+&lt;article class=&quot;application-card&quot;&gt;&lt;h2&gt;{{ item.event_name }}&lt;/h2&gt;
+&lt;p&gt;{{ item.full_name }} · {{ item.room_name }} · {{ item.event_date }} {{ item.event_time }}&lt;/p&gt;
+&lt;p class=&quot;status&quot;&gt;{{ item.status }}&lt;/p&gt;
+{% if item.status != &#x27;Завершено&#x27; %}
+&lt;form method=&quot;post&quot; action=&quot;{{ url_for(&#x27;change_status&#x27;, application_id=item.id) }}&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;csrf&quot; value=&quot;{{ session.csrf }}&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;status&quot; value=&quot;{{ statuses[statuses.index(item.status)+1] }}&quot;&gt;
+  &lt;button class=&quot;button-primary&quot;&gt;{{ statuses[statuses.index(item.status)+1] }}&lt;/button&gt;
+&lt;/form&gt;
+{% endif %}&lt;/article&gt;
+{% else %}&lt;p&gt;Новых заявок пока нет.&lt;/p&gt;{% endfor %}
+{% endblock %}</pre></section><section class="block text"><h3>Решение интерфейса</h3><p>Показываем событие, организатора, площадку, дату и текущий статус. Кнопка прямо называет следующий результат; скрытое поле передаёт его серверу. У завершённой заявки кнопки перехода нет.</p></section><section class="block text"><h3>Проверка</h3><p>Выйдите, войдите как Conf2027 / Demo77. У созданной заявки выполните оба перехода. При повторном открытии панели состояние сохранено в MySQL. Данные администратора вымышленные.</p></section></div></article><article class="lesson" id="page-28"><p class="eyebrow"></p><h2>Сохранить отзыв после завершения</h2><div class="blocks"><section class="block code"><h3>Добавьте в app.py: review</h3><pre>@app.post(&#x27;/review/&lt;int:application_id&gt;&#x27;)
+def review(application_id):
+    require_user()
+    row = query(&#x27;SELECT * FROM applications WHERE id=%s AND user_id=%s&#x27;, (application_id, g.user[&#x27;id&#x27;]), one=True)
+    if not row:
+        abort(404)
+    rating, comment = request.form.get(&#x27;rating&#x27;, &#x27;&#x27;), request.form.get(&#x27;comment&#x27;, &#x27;&#x27;).strip()
+    if row[&#x27;status&#x27;] != &#x27;Завершено&#x27; or rating not in (&#x27;1&#x27;,&#x27;2&#x27;,&#x27;3&#x27;,&#x27;4&#x27;,&#x27;5&#x27;) or not 1 &lt;= len(comment) &lt;= 500:
+        abort(400, &#x27;Отзыв: завершённая своя заявка, оценка 1–5 и текст 1–500 символов.&#x27;)
+    try:
+        query(&#x27;INSERT INTO reviews (application_id,rating,comment) VALUES (%s,%s,%s)&#x27;, (application_id, int(rating), comment), write=True)
+    except pymysql.err.IntegrityError:
+        abort(400, &#x27;Отзыв уже оставлен.&#x27;)
+    return redirect(url_for(&#x27;dashboard&#x27;))</pre></section><section class="block text"><h3>Проверка условий</h3><p>Запрос ищет одновременно id заявки и id пользователя. Чужая заявка не найдётся. Сервер проверяет завершённый статус, оценку 1–5 и длину текста. UNIQUE в reviews исключает повторный отзыв даже при повторной отправке.</p></section><section class="block text"><h3>Проверка полного сценария</h3><p>Войдите как pm08student, оставьте оценку и отзыв после завершения. Затем войдите как другой учебный пользователь: чужая запись не отображается. На этом серверный каркас создан вами; дальше улучшаем его дизайн.</p></section></div></article><article class="lesson" id="page-29"><p class="eyebrow"></p><h2>Задать палитру и читаемую типографику</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Создайте static/design.css. Переменные задают общие цвета и шаг. box-sizing включает отступы в размер, clamp изменяет заголовок без резкого скачка. Синий #0d47a1 с белым имеет контраст около 8,6:1.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>:root {
+  --accent: #0d47a1;
+  --text: #162b48;
+  --error: #a81727;
+  --space: 8px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--text); background: #f3f6fb; font: 16px/1.6 system-ui, sans-serif; }
+a { color: var(--accent); }
+h1 { font-size: clamp(28px, 4vw, 48px); line-height: 1.15; }
+h2 { font-size: 24px; line-height: 1.3; }
+main { max-width: 1160px; margin: 40px auto; padding: 0 24px; }</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-30"><p class="eyebrow"></p><h2>Оформить навигацию и главное объяснение</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Добавьте следующий блок в конец static/design.css. Оболочка и навигация используют flex. Каркас hero выделяет назначение сервиса; заголовок ограничен удобной длиной строки.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>.site-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 24px max(24px, calc((100vw - 1112px)/2)); background: white; }
+.brand { font-size: 22px; font-weight: 800; text-decoration: none; }
+nav { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+nav form { margin: 0; }
+footer { margin-top: 40px; padding: 24px; text-align: center; background: #162b48; color: white; }
+.hero { padding: 56px; background: #e2ebfa; border-radius: 20px; }
+.hero h1 { max-width: 650px; }
+.eyebrow { font-weight: 700; letter-spacing: .04em; }
+.explanation { margin-top: 32px; padding: 24px; }</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-31"><p class="eyebrow"></p><h2>Различить главное действие и клавиатурный фокус</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Добавьте следующий блок в конец static/design.css. Кнопка имеет область нажатия не меньше 44 px. Основное действие синее, выход остаётся текстовым. focus-visible показывает текущий элемент при Tab; skip-link появляется при фокусе.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>.button, button, .nav-primary { display: inline-block; min-height: 44px; border: 0; border-radius: 8px; padding: 12px 20px; font: inherit; text-decoration: none; cursor: pointer; }
+.button-primary, .nav-primary { background: var(--accent); color: white; }
+.link-button { padding: 0; background: transparent; color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.skip-link { position: absolute; top: -100px; left: 16px; padding: 12px; background: white; }
+.skip-link:focus { top: 8px; z-index: 1; }</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-32"><p class="eyebrow"></p><h2>Оформить поля, ошибку и обратную связь</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Добавьте следующий блок в конец static/design.css. Форма построена сеткой. Подпись, подсказка и ошибка рядом с вводом; aria-invalid усиливает рамку. design-summary появится после создания JavaScript.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>.form-card { max-width: 640px; margin: auto; padding: 32px; border-radius: 16px; background: white; }
+.form-card h1 { font-size: 32px; }
+.stack-form { display: grid; gap: calc(2 * var(--space)); }
+.field { display: grid; gap: 4px; }
+label { font-weight: 600; }
+input, select, textarea { display: block; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #72829b; border-radius: 6px; color: inherit; font: inherit; background: white; }
+small { font-size: 13px; color: #465873; }
+.field-error { font-size: 14px; color: var(--error); }
+[aria-invalid=&quot;true&quot;] { border: 2px solid var(--error); }
+.design-summary { padding: 12px 16px; margin: 0; background: #e9f0fa; border-left: 4px solid var(--accent); }
+.design-summary strong { display: block; }</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-33"><p class="eyebrow"></p><h2>Построить карточки и состояния кабинета</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Добавьте следующий блок в конец static/design.css. Каталог строится grid, карточка — flex. Основное действие остаётся внизу, длинный заголовок переносится. Пустое состояние занимает всю сетку.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>.filter-panel { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)) auto auto; gap: 16px; align-items: end; padding: 24px; background: white; border-radius: 12px; }
+.room-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; }
+.room-card { display: flex; flex-direction: column; border-radius: 16px; background: white; overflow: hidden; }
+.room-card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+.room-placeholder { display: grid; place-items: center; aspect-ratio: 16/10; font-size: 28px; font-weight: 800; color: #0d47a1; background: #e2ebfa; }
+.room-card-body { display: flex; flex: 1; flex-direction: column; padding: 24px; }
+.room-card-body .button { margin-top: auto; align-self: start; }
+.room-card h2, .application-card h2 { overflow-wrap: anywhere; }
+.empty-state { grid-column: 1/-1; padding: 32px; background: white; border-radius: 12px; }
+.application-card { margin-bottom: 24px; padding: 24px; background: white; border-radius: 12px; }
+.application-card form { max-width: 500px; display: grid; gap: 16px; }
+.status { display: inline-block; padding: 4px 12px; border-radius: 20px; background: #e2ebfa; font-weight: 700; }</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-34"><p class="eyebrow"></p><h2>Перестроить страницы для узкого экрана</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Добавьте следующий блок в конец static/design.css. На ширине до 700 px навигация и фильтры перестраиваются, карточки занимают одну колонку. minmax(0,1fr) позволяет колонке сжиматься. Не скрывайте переполнение вместо исправления причины.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>@media (max-width: 700px) {
+  .site-header { align-items: start; flex-direction: column; padding: 20px; }
+  nav { gap: 16px; }
+  main { margin: 24px auto; padding: 0 16px; }
+  .hero { padding: 24px; }
+  .form-card { padding: 20px; }
+  .filter-panel, .room-grid { grid-template-columns: minmax(0,1fr); }
+}</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-35"><p class="eyebrow"></p><h2>Уважать предпочтение уменьшенного движения</h2><div class="blocks"><section class="block text"><h3>Место и смысл</h3><p>Добавьте следующий блок в конец static/design.css. Анимация короткая и не задерживает ввод. prefers-reduced-motion отключает её при пользовательском предпочтении.</p></section><section class="block code"><h3>Последовательный фрагмент static/design.css</h3><pre>.design-summary { animation: appear .18s ease-out; }
+@keyframes appear { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}</pre></section><section class="block text"><h3>Проверка</h3><p>Обновите соответствующую страницу. Проверьте Network: design.css имеет статус 200. Сравните результат с каркасом, пройдите клавиатурой и повторите действие. Для мобильного варианта используйте 390×844.</p></section></div></article><article class="lesson" id="page-36"><p class="eyebrow"></p><h2>Добавить подсказку заполнения формы</h2><div class="blocks"><section class="block code"><h3>Создайте static/design.js: первая часть</h3><pre>// ПМ.08: подсказка сопровождает основную форму, сервер проверяет данные.
 &#x27;use strict&#x27;;
 const designForm = document.querySelector(&#x27;.stack-form&#x27;);
 if (designForm) {
@@ -122,7 +514,7 @@ if (designForm) {
   designForm.addEventListener(&#x27;change&#x27;, updateSummary);
   updateSummary();
 }
-</pre></section><section class="block text"><h3>Как читать updateSummary</h3><p>Обычное поле заполнено, если его обрезанное значение не пустое. Группа radio заполнена, когда хотя бы одна кнопка отмечена. Счётчик показывает факт заполнения, а не правильность телефона, пароля или даты. role=&quot;status&quot; обозначает обновляющееся сообщение. Начальный вызов updateSummary показывает состояние сразу, а if защищает страницы без .stack-form.</p></section><section class="block text"><h3>Проверка по действиям</h3><p>На регистрации: 0 из 6 → введите логин → 1 из 6 → очистите логин → 0 из 6. На новой заявке выбор одного способа оплаты увеличивает счётчик на один; переключение способа не увеличивает число обязательных полей. Отправьте корректную форму: серверный сценарий сохраняется. Откройте каталог: в Console нет ошибки обращения к отсутствующей форме.</p></section></div></article><article class="lesson" id="page-17"><p class="eyebrow"></p><h2>Связать серверную ошибку с полем и поставить фокус</h2><div class="blocks"><section class="block text"><h3>Дополнение к подсказке</h3><p>Добавьте второй блок в конец static/design.js, после закрывающей скобки первого if. На уже отрисованной странице ищем .field-error, затем поле внутри ближайшей .field. aria-invalid помечает неверный ввод. Set сохраняет существующие подсказки и исключает повторение идентификаторов. Фокус получает первое ошибочное поле.</p></section><section class="block code"><h3>Второй блок static/design.js</h3><pre>// Связываем видимые серверные ошибки с соответствующими полями.
+</pre></section><section class="block text"><h3>Разбор</h3><p>Выбираем .stack-form, отбираем обязательные поля, исключаем скрытый csrf. Создаём подсказку через textContent и обновляем на input/change. Счётчик сообщает факт заполнения, а не правильность данных; окончательно проверяет Python. Работа с группами radio оставлена как приём для самостоятельного варианта.</p></section><section class="block text"><h3>Проверка</h3><p>В регистрации 0 из 6 → введите логин → 1 из 6 → очистите → 0 из 6. В заявке пять полей; выбор оплаты добавляет один ответ. На странице без формы if предотвращает ошибку.</p></section></div></article><article class="lesson" id="page-37"><p class="eyebrow"></p><h2>Связать сообщение ошибки с полем</h2><div class="blocks"><section class="block code"><h3>Продолжите static/design.js: вторая часть</h3><pre>// Связываем видимые серверные ошибки с соответствующими полями.
 const errors = document.querySelectorAll(&#x27;.field-error&#x27;);
 let firstInvalid = null;
 errors.forEach((error, index) =&gt; {
@@ -137,7 +529,4 @@ errors.forEach((error, index) =&gt; {
   input.setAttribute(&#x27;aria-describedby&#x27;, [...ids].join(&#x27; &#x27;));
   firstInvalid ||= input;
 });
-if (firstInvalid) firstInvalid.focus();</pre></section><section class="block text"><h3>Проверка результата</h3><p>Отправьте пустую регистрацию. Курсор должен быть в логине. В Elements у него видны aria-invalid=&quot;true&quot; и aria-describedby с username-hint и username-error. Исправьте форму и отправьте повторно. Ошибки исчезают после успешной серверной проверки. Фокус не должен неожиданно перемещаться при обычном вводе: этот блок выполняется при загрузке ответа с ошибками.</p></section><figure class="block screenshot"><h3>Регистрация: текст ошибок и фокус в логине</h3><img src="assets/screenshots/b00b08af1d5064d0.png" alt="Регистрация: текст ошибок и фокус в логине"><figcaption>Ошибка выводится сервером рядом с полем; CSS делает её заметной, JavaScript связывает сообщение и переводит фокус.</figcaption></figure></div></article><article class="lesson" id="page-18"><p class="eyebrow"></p><h2>Проверить каталог, фильтр и пустой результат</h2><div class="blocks"><section class="block text"><h3>Как данные становятся карточкой</h3><p>Flask читает rooms из MySQL и передаёт список в templates/rooms.html. Для каждой записи подключается _room_card.html. Поля name, description, city, capacity, hourly_rate и image определяют содержимое; CSS определяет вид. Фильтр отправляет GET-параметры и сохраняет выбранные значения. Это позволяет видеть условие текущего результата.</p></section><section class="block text"><h3>Проверка состояний</h3><p>Выберите тип помещения и нажмите «Показать»: остаются соответствующие карточки, выбранный тип сохраняется. Укажите минимальную вместимость 1000: список пуст, появляется сообщение и возможность сбросить фильтр. Верните все помещения. Пустой результат отличается от ошибки соединения с MySQL — у них разные причины и сообщения.</p></section><figure class="block screenshot"><h3>Каталог: пустой результат фильтра</h3><img src="assets/screenshots/85c3119d98427892.png" alt="Каталог: фильтры и карточки"><figcaption>При вместимости 1000 площадок не найдено. Условия сохраняются, сообщение объясняет результат и предлагает сбросить фильтр.</figcaption></figure></div></article><article class="lesson" id="page-19"><p class="eyebrow"></p><h2>Проверить мобильную регистрацию и навигацию</h2><div class="blocks"><section class="block text"><h3>Один сценарий на двух размерах</h3><p>При 390×844 поля регистрации стоят последовательно, основная кнопка доступна после прокрутки, меню раскрывается отдельной кнопкой. На широком экране форма снова использует колонки. Откройте меню клавиатурой, пройдите ссылки и закройте его. Проверьте также личный кабинет под обычным пользователем и панель под администратором: это разные экраны.</p></section><section class="block text"><h3>Если появился горизонтальный скролл</h3><p>В Elements найдите элемент, который шире своей колонки. Проверьте фиксированную ширину, min-width, длинный непрерывный текст и grid-колонки. Исправьте причину. Вертикальная прокрутка длинной формы ожидаема; горизонтальный выход поля за экран мешает вводу.</p></section><figure class="block screenshot"><h3>Регистрация при 390×844</h3><img src="assets/screenshots/afd9c8fa797987fe.png" alt="Регистрация при 390×844"><figcaption>Мобильный снимок работающей регистрации: заголовок, подсказка и поля помещаются в ширину экрана.</figcaption></figure></div></article><article class="lesson" id="page-20"><p class="eyebrow"></p><h2>Повторить заявку, статусы и отзыв после изменения дизайна</h2><div class="blocks"><section class="block text"><h3>Проверка сохранности сценария</h3><p>Войдите как обычный пользователь. Создайте новую заявку и откройте кабинет. Выйдите, войдите как администратор, назначьте мероприятие и завершите его. Снова войдите как пользователь и оставьте отзыв. Не проверяйте пользовательскую форму под администратором: приложение направляет его в панель управления.</p></section><section class="block text"><h3>Как показывать состояние</h3><p>Статус должен иметь видимый текст: «Новая», «Мероприятие назначено», «Завершено». Цвет помогает различить состояния, но не заменяет подпись. После сохранения действия показывается сообщение результата. Отзыв доступен после завершения; CSS не должен делать недоступное действие похожим на рабочее.</p></section><figure class="block screenshot"><h3>Панель администратора и сохранённая заявка</h3><img src="assets/screenshots/661e709b54555067.png" alt="Панель администратора и сохранённая заявка"><figcaption>Администратор видит заявку и управляет её статусом. Учебные данные в снимке вымышленные.</figcaption></figure></div></article><article class="lesson" id="page-21"><p class="eyebrow"></p><h2>Перенести учебные приёмы в свою предметную область</h2><div class="blocks"><section class="block text"><h3>Новая БД и свой каталог</h3><p>Найдите свой номер в «Списке предметных областей» и загрузите его JSON. В новой копии исходной основы замените rooms.json до первого запуска. Создайте отдельную пустую БД с новым именем и обновите MYSQL_DATABASE; предоставьте своему пользователю права на неё. При первом запуске загрузятся три ресурса области. Замена JSON в уже заполненной БД не обновляет автоматически строки MySQL.</p></section><section class="block text"><h3>Что должно стать самостоятельным</h3><p>Измените названия сервиса, ресурсов, событий и действия по смыслу области. Технические значения auditorium/coworking/cinema сохраняйте для фильтра, а видимые подписи задавайте через ROOM_TYPE_LABELS в app.py. Разработайте палитру, типографику и композицию под своего пользователя. Изображения должны соответствовать ресурсу; примерные адреса и цены в каталоге вымышленные.</p></section><section class="block text"><h3>Два дополнительных изменения</h3><p>Прочитайте оба условия своей области. Для каждого запишите пользовательскую проблему, место изменения, решение и фактическую проверку. Например, оснащение помогает понять, подходит ли зал; перенос длинного названия позволяет прочитать событие на мобильном экране. Простая замена цвета сама по себе не объясняет решение пользовательской задачи.</p></section></div></article><article class="lesson" id="page-22"><p class="eyebrow"></p><h2>Пример небольшого изменения: показать оснащение</h2><div class="blocks"><section class="block text"><h3>Проблема и место</h3><p>Пользователь видит вместимость, но не знает, есть ли нужное оборудование. В поле equipment каталога эти данные уже есть. В templates/_room_card.html найдите &lt;p&gt;{{ room[&#x27;description&#x27;] }}&lt;/p&gt; и добавьте после него следующий фрагмент. Это дополнительный учебный приём; применяйте его там, где этого требует ваша область.</p></section><section class="block code"><h3>Учебный фрагмент: equipment.html</h3><pre>&lt;!-- templates/_room_card.html: после &lt;p&gt;{{ room[&#x27;description&#x27;] }}&lt;/p&gt; --&gt;
-{% if room[&#x27;equipment&#x27;] %}
-  &lt;p class=&quot;room-equipment&quot;&gt;&lt;strong&gt;Оснащение:&lt;/strong&gt; {{ room[&#x27;equipment&#x27;] }}&lt;/p&gt;
-{% endif %}</pre></section><section class="block text"><h3>Как устроено решение</h3><p>if не выводит пустую строку при отсутствии оборудования. Jinja экранирует значение, поэтому обычный текст показывается как текст. Не используйте |safe для данных каталога. В static/design.css своей области оформите .room-equipment как вторичную информацию, сохраняя читабельность. Не подменяйте основное действие декоративным блоком.</p></section><section class="block text"><h3>Проверка</h3><p>Откройте карточку с заполненным equipment: текст появился после описания. Испытайте длинную строку на 390×844 и отсутствие equipment. Повторите выбор площадки и создание заявки: добавление HTML не должно менять параметры отправки.</p></section></div></article><article class="lesson" id="page-23"><p class="eyebrow"></p><h2>Найти и исправить типичные ошибки</h2><div class="blocks"><section class="block text"><h3>CSS не применяется</h3><p>В Network проверьте статус 200 и содержимое design.css. В Elements → Styles найдите своё правило: зачёркнутое правило уступило более специфичному или расположенному ниже. Проверьте имя класса и порядок подключений. Не увеличивайте специфичность наугад и не добавляйте !important ко всему файлу.</p></section><section class="block text"><h3>JavaScript остановился</h3><p>Console показывает строку первой синтаксической ошибки. Проверьте скобки, кавычки и имя файла. На странице без формы designForm равен null — это штатно, код внутри if не выполняется. Подсказка не должна вмешиваться в method, action, name и скрытый CSRF.</p></section><section class="block text"><h3>Каталог или форма не работают</h3><p>Если каталог не обновился, проверьте выбранную новую БД и первый запуск с нужным rooms.json. Если ответ 400, сначала проверьте сохранность CSRF и обновите форму. Если ответ 503, проверьте доступность MySQL. Не маскируйте серверную ошибку стилями или постоянным сообщением «успешно».</p></section></div></article><article class="lesson" id="page-24"><p class="eyebrow"></p><h2>Подтвердить результат и объяснить решения</h2><div class="blocks"><section class="block text"><h3>Функциональная проверка</h3><p>Пройдите регистрацию с ошибкой и успехом, вход, фильтр и пустой результат, заявку, чужую заявку, смену статусов и отзыв. В терминале проекта для тестов задайте PORTAL_TEST_MYSQL=1 и MYSQL_PORT своего сервера; выполните python окружения -m pytest -q. Тесты создают отдельную временную БД rvpm_test_…; выбранному тестовому пользователю нужны права её создания. Не выдавайте приложению глобальные права ради проверки — используйте отдельную тестовую учётную запись администратора. Ожидается 8 passed.</p></section><section class="block text"><h3>Визуальная и пользовательская проверка</h3><p>Просмотрите каждую страницу на широком экране и 390×844. Проверьте основное действие, вторичные кнопки, длинные названия, ошибку рядом с полем, клавиатурный фокус и reduced motion. Сопоставьте результат с каркасом: объясните, как каждое изменение помогает пользователю выполнить действие.</p></section><section class="block text"><h3>Git и отчёт</h3><p>Зафиксируйте осмысленные изменения в Git. Не включайте виртуальное окружение, сессии и реальные секреты. Заполняйте общий шаблон отчёта своими решениями и фактическими результатами проверки. При сдаче проекта приложите ссылку на его репозиторий. Снимки должны показывать ваш интерфейс, а не повторять учебную демонстрацию.</p></section></div></article></main><footer><span>ПМ.08 — Разработка дизайна веб-приложений</span><span>Единый учебный комплект</span></footer></div></body></html>
+if (firstInvalid) firstInvalid.focus();</pre></section><section class="block text"><h3>Разбор</h3><p>Находим сообщения .field-error, выбираем поле внутри .field. aria-invalid указывает ошибочный ввод. aria-describedby дополняется идентификатором ошибки, существующая подсказка сохраняется. Фокус ставим только после ответа с ошибками, а не при каждом символе.</p></section><section class="block text"><h3>Проверка</h3><p>Пустая регистрация: фокус в логине, текст ошибки рядом с полем, счётчик 0 из 6. Исправьте ввод и отправьте снова.</p></section><figure class="block screenshot"><h3>Регистрация с ошибками</h3><img src="assets/screenshots/b00b08af1d5064d0.png" alt="Регистрация с ошибками"><figcaption>Снимок созданного по фрагментам примера: сервер объясняет ошибку, интерфейс помогает её исправить.</figcaption></figure></div></article><article class="lesson" id="page-38"><p class="eyebrow"></p><h2>Сопоставить готовый экран с проектным решением</h2><div class="blocks"><figure class="block screenshot"><h3>Главная страница после оформления</h3><img src="assets/screenshots/d044b1214002315e.png" alt="Главная страница после оформления"><figcaption>Одно главное действие ведёт к каталогу; текст объясняет, что произойдёт далее.</figcaption></figure><section class="block text"><h3>Обосновать результат</h3><p>Сравните экран с исходным бумажным каркасом. Покажите, где пользователь понимает назначение, находит главное действие и видит следующий шаг. Проверьте контраст и читаемость, а не только декоративное сходство.</p></section></div></article><article class="lesson" id="page-39"><p class="eyebrow"></p><h2>Проверить пустой фильтр и мобильный экран</h2><div class="blocks"><figure class="block screenshot"><h3>Пустой результат фильтра</h3><img src="assets/screenshots/85c3119d98427892.png" alt="Пустой результат фильтра"><figcaption>При вместимости 1000 есть объяснение и сброс условий.</figcaption></figure><figure class="block screenshot"><h3>Регистрация 390×844</h3><img src="assets/screenshots/afd9c8fa797987fe.png" alt="Регистрация 390×844"><figcaption>Мобильная форма созданного примера сохраняет подписи, подсказку и доступность полей.</figcaption></figure><section class="block text"><h3>Проверка</h3><p>Просмотрите все страницы при 390×844. Пройдите Tab и Shift+Tab, исправьте ошибку, отправьте заявку. Поля не выходят за экран; длинный текст переносится.</p></section></div></article><article class="lesson" id="page-40"><p class="eyebrow"></p><h2>Создать решение своей предметной области</h2><div class="blocks"><section class="block text"><h3>Данные, а не готовое приложение</h3><p>В разделе предметных областей доступен только JSON с учебными данными. Возьмите структуру и приёмы, которые вы самостоятельно реализовали по методичке. Создайте новую пустую БД с другим именем; дайте учебному пользователю права на неё, измените MYSQL_DATABASE и один раз выполните init-db и import-rooms для JSON своей области. Так данные примера не смешаются с вариантом.</p></section><section class="block text"><h3>Самостоятельный дизайн</h3><p>Измените название сервиса, типы ресурсов в TYPES, тексты и пользовательские действия по смыслу области. Разработайте свою композицию, палитру и типографику. Для изображений разместите выбранные вами файлы в static/img и исправьте пути image. Если фотографии пока нет, укажите пустую строку, чтобы работала заглушка.</p></section><section class="block text"><h3>Дополнительные задания</h3><p>Выполните оба условия своей области. Для каждого опишите проблему пользователя, место изменения, внесённый код и фактическую проверку. Например, оснащение помогает оценить пригодность ресурса; перенос длинного названия позволяет прочитать карточку на мобильном экране.</p></section></div></article><article class="lesson" id="page-41"><p class="eyebrow"></p><h2>Проверить работу и объяснить решения</h2><div class="blocks"><section class="block text"><h3>Функциональный путь</h3><p>Регистрация с ошибкой и успехом → вход → фильтр и пустой результат → заявка → свои записи → вход администратора → оба статуса → отзыв. Отдельно проверьте 403 для обычного пользователя на /admin, чужой отзыв, повторный отзыв и POST без csrf. Ошибочное действие не должно менять данные.</p></section><section class="block text"><h3>Типичные причины ошибки</h3><p>TemplateNotFound: проверьте имя созданного шаблона и папку templates. BuildError: сопоставьте имя функции маршрута и url_for. Соединение MySQL: проверьте переменные и запущенный сервер. CSS 404: файл должен быть static/design.css. Не повторяйте импорт в заполненную базу ради обновления внешнего вида.</p></section><section class="block text"><h3>Отчёт и Git</h3><p>В общем шаблоне отчёта покажите собственные решения и фактические проверки. Снимки должны отражать вашу предметную область. При сдаче проекта приложите ссылку на его репозиторий. Не включайте секреты, виртуальное окружение, сессии и реальные пользовательские данные.</p></section></div></article></main><footer><span>ПМ.08 — Разработка дизайна веб-приложений</span><span>Единый учебный комплект</span></footer></div></body></html>

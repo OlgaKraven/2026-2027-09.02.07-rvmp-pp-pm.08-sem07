@@ -1,0 +1,10 @@
+@app.before_request
+def prepare_request():
+    session.setdefault('csrf', secrets.token_urlsafe(24))
+    g.user = query('SELECT * FROM users WHERE id=%s', (session['user_id'],), one=True) if 'user_id' in session else None
+    if request.method == 'POST':
+        token = request.form.get('csrf', '')
+        if not secrets.compare_digest(token, session['csrf']):
+            abort(400, 'Обновите форму: проверка сессии не пройдена.')
+
+

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Панель администратора</h1>
+{% for item in applications %}
+<article class="application-card"><h2>{{ item.event_name }}</h2>
+<p>{{ item.full_name }} · {{ item.room_name }} · {{ item.event_date }} {{ item.event_time }}</p>
+<p class="status">{{ item.status }}</p>
+{% if item.status != 'Завершено' %}
+<form method="post" action="{{ url_for('change_status', application_id=item.id) }}">
+  <input type="hidden" name="csrf" value="{{ session.csrf }}">
+  <input type="hidden" name="status" value="{{ statuses[statuses.index(item.status)+1] }}">
+  <button class="button-primary">{{ statuses[statuses.index(item.status)+1] }}</button>
+</form>
+{% endif %}</article>
+{% else %}<p>Новых заявок пока нет.</p>{% endfor %}
+{% endblock %}

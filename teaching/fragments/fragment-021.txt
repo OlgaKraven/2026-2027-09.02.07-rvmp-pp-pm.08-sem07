@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Каталог — Конференции.РФ{% endblock %}
+{% block content %}
+<h1>Помещения для вашей конференции</h1>
+<form class="filter-panel" method="get">
+  <label>Тип <select name="category"><option value="">Все типы</option>
+    {% for key,label in types.items() %}<option value="{{ key }}" {% if filters.category==key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select></label>
+  <label>Город <input name="city" value="{{ filters.city }}"></label>
+  <label>Не менее мест <input type="number" min="1" name="capacity" value="{{ filters.capacity }}"></label>
+  <button class="button-primary">Показать</button>
+  <a href="{{ url_for('rooms') }}">Сбросить</a>
+</form>
+<p role="status">Найдено: {{ rooms|length }}</p>
+<div class="room-grid">
+  {% for room in rooms %}{% include '_room_card.html' %}{% else %}
+    <section class="empty-state"><h2>Подходящих помещений не нашлось</h2>
+      <p>Измените условия или <a href="{{ url_for('rooms') }}">сбросьте фильтры</a>.</p>
+    </section>
+  {% endfor %}
+</div>
+{% endblock %}

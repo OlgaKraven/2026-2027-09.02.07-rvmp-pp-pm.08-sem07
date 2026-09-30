@@ -1,0 +1,14 @@
+@app.post('/status/<int:application_id>')
+def change_status(application_id):
+    require_user(admin=True)
+    row = query('SELECT status FROM applications WHERE id=%s', (application_id,), one=True)
+    if not row:
+        abort(404)
+    next_status = request.form.get('status', '')
+    current = STATUSES.index(row['status'])
+    if current == 2 or next_status != STATUSES[current + 1]:
+        abort(400, 'Допустим только следующий статус.')
+    query('UPDATE applications SET status=%s WHERE id=%s', (next_status, application_id), write=True)
+    return redirect(url_for('admin'))
+
+

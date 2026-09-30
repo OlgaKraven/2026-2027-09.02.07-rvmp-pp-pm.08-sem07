@@ -1,0 +1,27 @@
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    values = request.form if request.method == 'POST' else {}
+    errors = {}
+    if request.method == 'POST':
+        rules = {'username': (r'[A-Za-z0-9]{6,30}', 'Латиница и цифры: 6–30 символов.'),
+                 'full_name': (r'[А-Яа-яЁё]+(?: [А-Яа-яЁё]+)+', 'Укажите ФИО кириллицей.'),
+                 'phone': (r'8\(\d{3}\)\d{3}-\d{2}-\d{2}', 'Формат: 8(XXX)XXX-XX-XX.'),
+                 'email': (r'[^\s@]+@[^\s@]+\.[^\s@]+', 'Укажите адрес почты.')}
+        for key, (pattern, message) in rules.items():
+            if not re.fullmatch(pattern, values.get(key, '')):
+                errors[key] = message
+        password = values.get('password', '')
+        if not 8 <= len(password) <= 128:
+            errors['password'] = 'Пароль: от 8 до 128 символов.'
+        if values.get('confirm') != password:
+            errors['confirm'] = 'Пароли не совпадают.'
+        if not errors:
+            try:
+                query('INSERT INTO users (username,full_name,phone,email,password_hash) VALUES (%s,%s,%s,%s,%s)',
+                      tuple(values[k] for k in rules) + (generate_password_hash(password),), write=True)
+                return redirect(url_for('login'))
+            except pymysql.err.IntegrityError:
+                errors['username'] = 'Такой логин или адрес почты уже используется.'
+    return render_template('register.html', values=values, errors=errors)
+
+

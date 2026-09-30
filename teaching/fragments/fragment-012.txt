@@ -1,0 +1,10 @@
+@app.cli.command('init-db')
+def init_db():
+    for statement in (ROOT / 'schema.sql').read_text().split(';'):
+        if statement.strip():
+            query(statement, write=True)
+    query('INSERT IGNORE INTO users (username, full_name, phone, email, password_hash, is_admin) VALUES (%s,%s,%s,%s,%s,1)',
+          ('Conf2027', 'Учебный Администратор', '8(900)000-00-00', 'admin@example.test', generate_password_hash('Demo77')), write=True)
+    click.echo('Таблицы созданы. Учебный администратор: Conf2027 / Demo77.')
+
+

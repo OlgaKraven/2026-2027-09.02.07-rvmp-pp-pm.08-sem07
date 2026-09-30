@@ -1,0 +1,19 @@
+import json
+import os
+import re
+import secrets
+from datetime import date
+from pathlib import Path
+
+import click
+import pymysql
+from flask import Flask, abort, g, redirect, render_template, request, session, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
+
+app = Flask(__name__)
+app.secret_key = os.environ['FLASK_SECRET']
+ROOT = Path(__file__).parent
+TYPES = {'auditorium': 'Аудитория', 'coworking': 'Коворкинг', 'cinema': 'Кинозал'}
+STATUSES = ('Новая', 'Мероприятие назначено', 'Завершено')
+
+

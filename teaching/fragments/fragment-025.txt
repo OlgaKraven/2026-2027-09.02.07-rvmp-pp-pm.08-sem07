@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% from '_field.html' import field with context %}
+{% block title %}Регистрация — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="form-card"><h1>Создайте учётную запись</h1><p>Все поля обязательны.</p>
+<form method="post" class="stack-form" novalidate>
+  <input type="hidden" name="csrf" value="{{ session.csrf }}">
+  {{ field('username','Логин',hint='Латиница и цифры: 6–30 символов') }}
+  {{ field('full_name','ФИО',hint='Кириллица и пробелы') }}
+  {{ field('phone','Телефон',hint='8(XXX)XXX-XX-XX') }}
+  {{ field('email','Электронная почта','email') }}
+  {{ field('password','Пароль','password','От 8 до 128 символов') }}
+  {{ field('confirm','Повторите пароль','password') }}
+  <button class="button-primary">Создать пользователя</button>
+</form></section>
+{% endblock %}

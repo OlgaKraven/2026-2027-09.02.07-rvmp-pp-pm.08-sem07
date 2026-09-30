@@ -1,0 +1,17 @@
+@app.route('/rooms')
+def rooms():
+    filters = {key: request.args.get(key, '').strip() for key in ('category', 'city', 'capacity')}
+    sql, values = 'SELECT * FROM rooms WHERE 1=1', []
+    if filters['category'] in TYPES:
+        sql += ' AND category=%s'
+        values.append(filters['category'])
+    if filters['city']:
+        sql += ' AND city=%s'
+        values.append(filters['city'])
+    if filters['capacity'].isdigit():
+        sql += ' AND capacity>=%s'
+        values.append(int(filters['capacity']))
+    rows = query(sql + ' ORDER BY hourly_rate, id', tuple(values))
+    return render_template('rooms.html', rooms=rows, filters=filters)
+
+

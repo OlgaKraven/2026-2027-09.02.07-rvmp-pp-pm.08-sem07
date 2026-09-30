@@ -1,0 +1,9 @@
+.site-header { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 24px max(24px, calc((100vw - 1112px)/2)); background: white; }
+.brand { font-size: 22px; font-weight: 800; text-decoration: none; }
+nav { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+nav form { margin: 0; }
+footer { margin-top: 40px; padding: 24px; text-align: center; background: #162b48; color: white; }
+.hero { padding: 56px; background: #e2ebfa; border-radius: 20px; }
+.hero h1 { max-width: 650px; }
+.eyebrow { font-weight: 700; letter-spacing: .04em; }
+.explanation { margin-top: 32px; padding: 24px; }

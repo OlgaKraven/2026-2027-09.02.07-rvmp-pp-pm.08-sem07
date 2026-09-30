@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% from '_field.html' import field with context %}
+{% block title %}Вход — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="form-card"><h1>Войти в сервис</h1>
+<form method="post" class="stack-form" novalidate>
+  <input type="hidden" name="csrf" value="{{ session.csrf }}">
+  {{ field('username','Логин') }}{{ field('password','Пароль','password') }}
+  <button class="button-primary">Войти</button>
+</form></section>
+{% endblock %}

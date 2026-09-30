@@ -1,0 +1,7 @@
+@app.route('/dashboard')
+def dashboard():
+    require_user()
+    rows = query('SELECT a.*,r.name AS room_name,v.rating,v.comment FROM applications a JOIN rooms r ON r.id=a.room_id LEFT JOIN reviews v ON v.application_id=a.id WHERE a.user_id=%s ORDER BY a.id DESC', (g.user['id'],))
+    return render_template('dashboard.html', applications=rows)
+
+

@@ -1,0 +1,28 @@
+@app.route('/apply/<int:room_id>', methods=['GET', 'POST'])
+def apply(room_id):
+    require_user()
+    room = query('SELECT * FROM rooms WHERE id=%s', (room_id,), one=True)
+    if not room:
+        abort(404)
+    values, errors = request.form if request.method == 'POST' else {}, {}
+    if request.method == 'POST':
+        if not 3 <= len(values.get('event_name', '').strip()) <= 120:
+            errors['event_name'] = 'Название: 3–120 символов.'
+        try:
+            if date.fromisoformat(values.get('event_date', '')) < date.today():
+                raise ValueError
+        except ValueError:
+            errors['event_date'] = 'Укажите сегодняшнюю или будущую дату.'
+        if not re.fullmatch(r'(?:[01]\d|2[0-3]):[0-5]\d', values.get('event_time', '')):
+            errors['event_time'] = 'Укажите время.'
+        if not values.get('participants', '').isdigit() or not 1 <= int(values.get('participants', '0')) <= room['capacity']:
+            errors['participants'] = 'Число участников должно соответствовать вместимости.'
+        if values.get('payment') not in ('Карта', 'СБП', 'Наличные'):
+            errors['payment'] = 'Выберите способ оплаты.'
+        if not errors:
+            query('INSERT INTO applications (user_id,room_id,event_name,event_date,event_time,participants,payment) VALUES (%s,%s,%s,%s,%s,%s,%s)',
+                  (g.user['id'], room_id, values['event_name'].strip(), values['event_date'], values['event_time'], int(values['participants']), values['payment']), write=True)
+            return redirect(url_for('dashboard'))
+    return render_template('apply.html', room=room, values=values, errors=errors)
+
+

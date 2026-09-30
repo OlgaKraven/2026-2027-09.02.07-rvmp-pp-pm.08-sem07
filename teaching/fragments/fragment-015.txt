@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Конференции.РФ{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
+  <script src="{{ url_for('static', filename='design.js') }}" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Перейти к содержанию</a>
+<header class="site-header">
+  <a class="brand" href="{{ url_for('home') }}">Конференции.РФ</a>
+  <nav aria-label="Главная навигация">
+    <a href="/rooms">Помещения</a>
+    {% if g.user %}
+      <a href="{{ '/admin' if g.user.is_admin else '/dashboard' }}">Мои действия</a>
+      <form action="/logout" method="post">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <button class="link-button">Выйти</button>
+      </form>
+    {% else %}
+      <a href="/login">Войти</a>
+      <a class="nav-primary" href="/register">Регистрация</a>
+    {% endif %}
+  </nav>
+</header>
+<main id="main">{% block content %}{% endblock %}</main>
+<footer>Конференции.РФ · Учебный пример ПМ.08</footer>
+</body>
+</html>

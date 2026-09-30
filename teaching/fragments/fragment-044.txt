@@ -1,0 +1,26 @@
+// ПМ.08: подсказка сопровождает основную форму, сервер проверяет данные.
+'use strict';
+const designForm = document.querySelector('.stack-form');
+if (designForm) {
+  const allFields = [...designForm.querySelectorAll('input, select, textarea')];
+  const fields = allFields.filter((field, index) => field.type !== 'hidden' && field.required
+    && (field.type !== 'radio' || allFields.findIndex(other => other.name === field.name) === index));
+  const summary = document.createElement('p');
+  summary.className = 'design-summary';
+  summary.setAttribute('role', 'status');
+  const heading = document.createElement('strong');
+  heading.textContent = 'Заполнение формы';
+  const counter = document.createElement('span');
+  summary.append(heading, counter);
+  designForm.prepend(summary);
+  function updateSummary() {
+    const filled = fields.filter(field => field.type === 'radio'
+      ? allFields.some(other => other.name === field.name && other.checked)
+      : field.value.trim() !== '').length;
+    counter.textContent = `Заполнено ${filled} из ${fields.length} обязательных полей. Проверка выполняется при отправке.`;
+  }
+  designForm.addEventListener('input', updateSummary);
+  designForm.addEventListener('change', updateSummary);
+  updateSummary();
+}
+

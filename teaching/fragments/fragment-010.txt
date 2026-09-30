@@ -1,0 +1,5 @@
+@app.context_processor
+def template_context():
+    return {'types': TYPES, 'statuses': STATUSES}
+
+
