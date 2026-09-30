@@ -1,0 +1,11 @@
+<div class="field {% if errors.get('username') %}has-error{% endif %}">
+  <label for="username">Логин <span>*</span></label>
+  <input id="username" name="username" value="{{ values.username }}"
+         required minlength="6" pattern="[A-Za-z0-9]+"
+         autocomplete="username"
+         aria-describedby="username-hint{% if errors.get('username') %} username-error{% endif %}">
+  <small id="username-hint">Латиница и цифры, не менее 6 символов</small>
+  {% if errors.get('username') %}
+    <span class="field-error" id="username-error">{{ errors.username }}</span>
+  {% endif %}
+</div>

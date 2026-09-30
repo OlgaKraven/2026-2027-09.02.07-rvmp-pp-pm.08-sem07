@@ -1,0 +1,4 @@
+<!-- templates/_room_card.html: после <p>{{ room['description'] }}</p> -->
+{% if room['equipment'] %}
+  <p class="room-equipment"><strong>Оснащение:</strong> {{ room['equipment'] }}</p>
+{% endif %}

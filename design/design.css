@@ -7,7 +7,7 @@
 }
 
 /* Основное действие отличается от текста и имеет контрастную подпись. */
-.button-primary, .nav-primary, .button, button[type="submit"], form > button {
+.button-primary, .nav-primary, button[type="submit"]:not(.link-button) {
   background-color: var(--design-accent);
   color: #fff;
   min-height: 44px;
@@ -20,8 +20,8 @@ a, button, input, select, textarea { touch-action: manipulation; }
 
 /* Формы: подсказка и ошибка сопровождают поле, а не только цвет. */
 .design-summary {
-  margin: 0 0 16px;
-  padding: 12px 16px;
+  margin: 0 0 calc(2 * var(--design-space));
+  padding: 12px calc(2 * var(--design-space));
   border-left: 4px solid var(--design-accent);
   border-radius: 8px;
   background: #e9f0fa;
@@ -30,27 +30,27 @@ a, button, input, select, textarea { touch-action: manipulation; }
 }
 .design-summary strong { display: block; margin-bottom: 4px; }
 [aria-invalid="true"] { border: 2px solid var(--design-error); }
-.error, .field-error { color: var(--design-error); }
+.field-error { color: var(--design-error); }
 .rating-options input { width: 1px; height: 1px; clip-path: inset(50%); }
 .rating-options input:focus-visible + label { outline: 3px solid var(--design-accent); }
 input, select, textarea { min-height: 44px; }
 
 /* Карточки сохраняют форму при длинных названиях. */
-.card h2, .room-card h3, .application-card h3 {
+.room-card h3, .application-card h3 {
   overflow-wrap: anywhere;
 }
-.card > img, .room-card-image img {
+.room-card-image img {
   object-fit: cover;
   aspect-ratio: 16 / 10;
 }
-.grid, .room-grid { align-items: stretch; }
+.room-grid { align-items: stretch; }
 
 /* Узкий экран: ничего не скрываем ради устранения переполнения. */
 @media (max-width: 600px) {
-  .form-card, .auth-card { padding: 20px; }
-  .grid, .room-grid { grid-template-columns: minmax(0, 1fr); }
+  .form-card { padding: 20px; }
+  .room-grid { grid-template-columns: minmax(0, 1fr); }
   .design-summary { padding: 12px; }
-  .filter input, .filter select { max-width: 100%; }
+  .filter-panel input, .filter-panel select { max-width: 100%; }
   h1 { overflow-wrap: anywhere; }
 }
 

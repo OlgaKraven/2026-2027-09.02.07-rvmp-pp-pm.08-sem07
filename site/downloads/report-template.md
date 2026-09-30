@@ -18,7 +18,7 @@
 
 <h2 style="font-family:'Times New Roman';color:#000;font-size:14pt;text-align:justify;line-height:1.5;page-break-after:avoid;">Исходные условия и выбранный стек</h2>
 
-<p style="font-family:'Times New Roman';color:#000;font-size:14pt;text-align:justify;line-height:1.5;text-indent:1.25cm;">Опишите свою область, пользователя, сценарий и выбранную технологию. Укажите версии редактора, языка, СУБД и браузера; объясните устройство проекта.</p>
+<p style="font-family:'Times New Roman';color:#000;font-size:14pt;text-align:justify;line-height:1.5;text-indent:1.25cm;">Опишите свою область, пользователя, сценарий и Python / Flask / MySQL. Укажите версии редактора, языка, СУБД и браузера; объясните устройство проекта.</p>
 
 <p style="font-family:'Times New Roman';color:#000;font-size:14pt;text-align:justify;line-height:1.5;text-indent:1.25cm;">Заполните по результатам своей работы.</p>
 

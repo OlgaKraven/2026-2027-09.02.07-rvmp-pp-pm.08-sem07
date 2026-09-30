@@ -1,6 +1,6 @@
 // ПМ.08: подсказка сопровождает основную форму, сервер проверяет данные.
 'use strict';
-const designForm = document.querySelector('.stack-form, .form-card form');
+const designForm = document.querySelector('.stack-form');
 if (designForm) {
   const allFields = [...designForm.querySelectorAll('input, select, textarea')];
   const fields = allFields.filter((field, index) => field.type !== 'hidden' && field.required
@@ -25,13 +25,13 @@ if (designForm) {
 }
 
 // Связываем видимые серверные ошибки с соответствующими полями.
-const errors = document.querySelectorAll('.field-error, .error');
+const errors = document.querySelectorAll('.field-error');
 let firstInvalid = null;
 errors.forEach((error, index) => {
   if (!error.id) error.id = `design-error-${index}`;
   const group = error.closest('.field');
-  const input = group ? group.querySelector('input, select, textarea')
-    : error.previousElementSibling;
+  // Поле и его ошибка находятся внутри одной группы .field.
+  const input = group ? group.querySelector('input, select, textarea') : null;
   if (!input || !input.matches('input, select, textarea')) return;
   input.setAttribute('aria-invalid', 'true');
   const ids = new Set((input.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
