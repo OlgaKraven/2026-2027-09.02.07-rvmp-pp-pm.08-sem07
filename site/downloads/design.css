@@ -1,0 +1,69 @@
+/* Дизайн ПМ.08: добавляйте блоки в указанном порядке. */
+:root {
+  --design-accent: #0d47a1;
+  --design-text: #162b48;
+  --design-error: #a81727;
+  --design-space: 8px;
+}
+
+/* Основное действие отличается от текста и имеет контрастную подпись. */
+.button-primary, .nav-primary, .button, button[type="submit"], form > button {
+  background-color: var(--design-accent);
+  color: #fff;
+  min-height: 44px;
+}
+a, button, input, select, textarea { touch-action: manipulation; }
+:focus-visible {
+  outline: 3px solid var(--design-accent);
+  outline-offset: 4px;
+}
+
+/* Формы: подсказка и ошибка сопровождают поле, а не только цвет. */
+.design-summary {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-left: 4px solid var(--design-accent);
+  border-radius: 8px;
+  background: #e9f0fa;
+  color: var(--design-text);
+  font-size: 14px;
+}
+.design-summary strong { display: block; margin-bottom: 4px; }
+[aria-invalid="true"] { border: 2px solid var(--design-error); }
+.error, .field-error { color: var(--design-error); }
+.rating-options input { width: 1px; height: 1px; clip-path: inset(50%); }
+.rating-options input:focus-visible + label { outline: 3px solid var(--design-accent); }
+input, select, textarea { min-height: 44px; }
+
+/* Карточки сохраняют форму при длинных названиях. */
+.card h2, .room-card h3, .application-card h3 {
+  overflow-wrap: anywhere;
+}
+.card > img, .room-card-image img {
+  object-fit: cover;
+  aspect-ratio: 16 / 10;
+}
+.grid, .room-grid { align-items: stretch; }
+
+/* Узкий экран: ничего не скрываем ради устранения переполнения. */
+@media (max-width: 600px) {
+  .form-card, .auth-card { padding: 20px; }
+  .grid, .room-grid { grid-template-columns: minmax(0, 1fr); }
+  .design-summary { padding: 12px; }
+  .filter input, .filter select { max-width: 100%; }
+  h1 { overflow-wrap: anywhere; }
+}
+
+/* Анимация обратной связи не мешает читать и вводить данные. */
+.design-summary { animation: design-appear .18s ease-out; }
+@keyframes design-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Вход — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="auth-section">
+    <div class="container auth-layout">
+        <div class="auth-aside">
+            <span class="eyebrow eyebrow-light">Личный кабинет</span>
+            <h1>Ваши конференции — в одном месте</h1>
+            <p>Входите, чтобы отправлять заявки, проверять их статусы и делиться впечатлениями.</p>
+            <ul><li><span>✓</span> Все заявки в одном кабинете</li><li><span>✓</span> Актуальные статусы бронирований</li><li><span>✓</span> Защищённое хранение данных</li></ul>
+        </div>
+        <div class="auth-card">
+            <div class="auth-card-heading">
+                <span class="auth-icon" aria-hidden="true">→</span>
+                <h2>Вход в систему</h2>
+                <p>Введите данные, указанные при регистрации.</p>
+            </div>
+            {% if error %}<div class="form-alert" role="alert"><span>!</span>{{ error }}</div>{% endif %}
+            <form method="post" class="stack-form" novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <div class="field">
+                    <label for="username">Логин</label>
+                    <input id="username" name="username" value="{{ username }}" autocomplete="username" required autofocus placeholder="Например, ivanov27">
+                </div>
+                <div class="field">
+                    <label for="password">Пароль</label>
+                    <div class="password-field">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Ваш пароль">
+                        <button type="button" data-password-toggle aria-label="Показать пароль">◉</button>
+                    </div>
+                </div>
+                <button class="button button-primary button-full" type="submit">Войти <span aria-hidden="true">→</span></button>
+            </form>
+            <p class="auth-switch">Еще не зарегистрированы? <a href="{{ url_for('portal.register') }}">Регистрация</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

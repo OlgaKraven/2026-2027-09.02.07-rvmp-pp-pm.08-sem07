@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Мои заявки — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="account-hero">
+    <div class="container account-heading">
+        <div>
+            <span class="eyebrow eyebrow-light">Личный кабинет</span>
+            <h1>Мои заявки</h1>
+            <p>{{ g.user['full_name'] }}, здесь хранится история ваших бронирований.</p>
+        </div>
+        <a class="button button-light" href="{{ url_for('portal.new_application') }}">+ Новая заявка</a>
+    </div>
+</section>
+
+<section class="section dashboard-section">
+    <div class="container">
+        {% if applications %}
+        <div class="application-list">
+            {% for application in applications %}
+            <article class="application-card" id="application-{{ application['id'] }}">
+                <div class="application-image">
+                    <img src="{{ url_for('static', filename=application['image']) }}" alt="" width="360" height="260" loading="lazy">
+                    <span class="status-badge status-{{ application['status'] }}">{{ status_labels[application['status']] }}</span>
+                </div>
+                <div class="application-content">
+                    <div class="application-title-row">
+                        <div><span class="application-number">Заявка №{{ application['id'] }}</span><h2>{{ application['conference_name'] }}</h2></div>
+                        <span class="application-created">Создана {{ application['created_at'][:10]|pretty_date }}</span>
+                    </div>
+                    <p class="application-room">{{ application['room_name'] }} <span>·</span> {{ application['city'] }}</p>
+                    <dl class="application-facts">
+                        <div><dt>Дата и время</dt><dd>{{ application['event_date']|pretty_date }}, {{ application['start_time'] }}</dd></div>
+                        <div><dt>Участников</dt><dd>{{ application['attendees'] }} чел.</dd></div>
+                        <div><dt>Оплата</dt><dd>{{ payment_labels[application['payment_method']] }}</dd></div>
+                    </dl>
+
+                    <ol class="status-track" aria-label="Ход обработки заявки">
+                        <li class="is-done"><span>✓</span><small>Новая</small></li>
+                        <li class="{% if application['status'] in ('scheduled', 'completed') %}is-done{% endif %}"><span>{% if application['status'] in ('scheduled', 'completed') %}✓{% else %}2{% endif %}</span><small>Назначена</small></li>
+                        <li class="{% if application['status'] == 'completed' %}is-done{% endif %}"><span>{% if application['status'] == 'completed' %}✓{% else %}3{% endif %}</span><small>Завершена</small></li>
+                    </ol>
+
+                    {% if application['review_id'] %}
+                    <div class="submitted-review">
+                        <div class="stars" aria-label="Оценка {{ application['rating'] }} из 5">{{ '★' * application['rating'] }}{{ '☆' * (5 - application['rating']) }}</div>
+                        <p>{{ application['review_comment'] }}</p>
+                        <small>Ваш отзыв</small>
+                    </div>
+                    {% elif application['status'] == 'completed' %}
+                    <details class="review-form-wrap">
+                        <summary>Оставить отзыв</summary>
+                        <form method="post" action="{{ url_for('portal.add_review', application_id=application['id']) }}" class="review-form">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <fieldset class="rating-field">
+                                <legend>Оценка</legend>
+                                <div class="rating-options">
+                                    {% for value in range(5, 0, -1) %}<input id="rating-{{ application['id'] }}-{{ value }}" type="radio" name="rating" value="{{ value }}" required><label for="rating-{{ application['id'] }}-{{ value }}" title="{{ value }} из 5">★</label>{% endfor %}
+                                </div>
+                            </fieldset>
+                            <div class="field"><label for="comment-{{ application['id'] }}">Ваши впечатления</label><textarea id="comment-{{ application['id'] }}" name="comment" minlength="10" maxlength="500" required placeholder="Расскажите о площадке и качестве мероприя"></textarea></div>
+                            <button class="button button-primary button-small" type="submit">Опубликовать отзыв</button>
+                        </form>
+                    </details>
+                    {% else %}
+                    <p class="review-locked"><span aria-hidden="true">○</span> Отзыв станет доступен после завершения мероприя.</p>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">+</span>
+            <h2>У вас пока нет заявок</h2>
+            <p>Выберите помещение и заполните короткую форму.</p>
+            <a class="button button-primary" href="{{ url_for('portal.rooms') }}">Выбрать помещение</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

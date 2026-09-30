@@ -1,0 +1,21 @@
+<article class="room-card">
+    <a class="room-card-image" href="{{ url_for('portal.room_detail', room_id=room['id']) }}" tabindex="-1" aria-hidden="true">
+        <img src="{{ url_for('static', filename=room['image']) }}" alt="" loading="lazy" width="720" height="460">
+        <span class="room-type">{{ room_type_labels[room['category']] }}</span>
+    </a>
+    <div class="room-card-body">
+        <div class="room-location">
+            <span aria-hidden="true">●</span> {{ room['city'] }}
+        </div>
+        <h3><a href="{{ url_for('portal.room_detail', room_id=room['id']) }}">{{ room['name'] }}</a></h3>
+        <p>{{ room['description'] }}</p>
+        <dl class="room-facts">
+            <div><dt>Вместимость</dt><dd>до {{ room['capacity'] }} чел.</dd></div>
+            <div><dt>Стоимость</dt><dd>{{ room['hourly_rate'] }} ₽/ч</dd></div>
+        </dl>
+        <div class="room-card-actions">
+            <a class="button button-secondary button-small" href="{{ url_for('portal.room_detail', room_id=room['id']) }}">Подробнее</a>
+            <a class="button button-primary button-small" href="{{ url_for('portal.new_application', room=room['id']) if g.user else url_for('portal.login') }}">Выбрать</a>
+        </div>
+    </div>
+</article>

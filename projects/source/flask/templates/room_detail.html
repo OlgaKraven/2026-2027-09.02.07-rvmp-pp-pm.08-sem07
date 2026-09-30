@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ room['name'] }} — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="room-detail-section">
+    <div class="container">
+        <nav class="breadcrumbs" aria-label="Хлебные крошки">
+            <a href="{{ url_for('portal.index') }}">Главная</a><span>/</span><a href="{{ url_for('portal.rooms') }}">Помещения</a><span>/</span><span aria-current="page">{{ room['name'] }}</span>
+        </nav>
+        <div class="room-detail-grid">
+            <div class="room-detail-media">
+                <img src="{{ url_for('static', filename=room['image']) }}" alt="{{ room['name'] }}" width="1000" height="700">
+                <span class="room-type">{{ room_type_labels[room['category']] }}</span>
+            </div>
+            <div class="room-detail-copy">
+                <span class="room-location"><span aria-hidden="true">●</span> {{ room['city'] }}</span>
+                <h1>{{ room['name'] }}</h1>
+                <p class="room-lead">{{ room['description'] }}</p>
+                <dl class="detail-facts">
+                    <div><dt>Вместимость</dt><dd>до {{ room['capacity'] }} человек</dd></div>
+                    <div><dt>Стоимость</dt><dd>{{ room['hourly_rate'] }} ₽/час</dd></div>
+                    <div><dt>Адрес</dt><dd>{{ room['address'] }}</dd></div>
+                </dl>
+                <div class="equipment"><h2>Оснащение</h2><p>{{ room['equipment'] }}</p></div>
+                <a class="button button-primary button-large button-full" href="{{ url_for('portal.new_application', room=room['id']) if g.user else url_for('portal.login') }}">Отправить заявку <span aria-hidden="true">→</span></a>
+            </div>
+        </div>
+
+        <section class="detail-reviews">
+            <div class="section-heading"><div><span class="eyebrow">Впечатления</span><h2>Отзывы о площадке</h2></div></div>
+            {% if reviews %}
+            <div class="review-grid">
+                {% for review in reviews %}
+                <article class="review-card">
+                    <div class="stars" aria-label="Оценка {{ review['rating'] }} из 5">{{ '★' * review['rating'] }}{{ '☆' * (5 - review['rating']) }}</div>
+                    <blockquote>{{ review['comment'] }}</blockquote>
+                    <p><strong>{{ review['full_name'] }}</strong></p>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}<p class="muted">Отзывов пока нет. Первый отзыв можно оставить после завершения мероприя.</p>{% endif %}
+        </section>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d47a1">
+    <meta name="description" content="Конференции.РФ — бронирование помещений для всероссийских конференций.">
+    <title>{% block title %}Конференции.РФ{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <a class="skip-link" href="#main-content">К основному содержанию</a>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="{{ url_for('portal.index') }}" aria-label="Конференции.РФ, главная">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" width="42" height="42" alt="">
+                <span>Конференции<span>.РФ</span></span>
+            </a>
+
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
+                <span class="sr-only">Открыть меню</span>
+                <span></span><span></span><span></span>
+            </button>
+
+            <nav class="site-nav" id="site-navigation" aria-label="Основная навигация">
+                <a href="{{ url_for('portal.rooms') }}" {% if request.endpoint in ('portal.rooms', 'portal.room_detail') %}aria-current="page"{% endif %}>Помещения</a>
+                {% if g.user %}
+                    {% if g.user['is_admin'] %}
+                        <a href="{{ url_for('portal.admin') }}" {% if request.endpoint == 'portal.admin' %}aria-current="page"{% endif %}>Панель администратора</a>
+                    {% else %}
+                        <a href="{{ url_for('portal.dashboard') }}" {% if request.endpoint == 'portal.dashboard' %}aria-current="page"{% endif %}>Мои заявки</a>
+                        <a class="nav-primary" href="{{ url_for('portal.new_application') }}">Новая заявка</a>
+                    {% endif %}
+                    <div class="nav-user">
+                        <span title="{{ g.user['full_name'] }}">{{ g.user['username'] }}</span>
+                        <form action="{{ url_for('portal.logout') }}" method="post">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <button class="link-button" type="submit">Выйти</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('portal.login') }}" {% if request.endpoint == 'portal.login' %}aria-current="page"{% endif %}>Войти</a>
+                    <a class="nav-primary" href="{{ url_for('portal.register') }}">Регистрация</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-stack container" aria-live="polite">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        <span class="flash-icon" aria-hidden="true">
+                            {% if category == 'success' %}✓{% elif category == 'error' %}!{% else %}i{% endif %}
+                        </span>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <a class="brand brand-footer" href="{{ url_for('portal.index') }}">
+                    <img src="{{ url_for('static', filename='img/logo.svg') }}" width="38" height="38" alt="">
+                    <span>Конференции<span>.РФ</span></span>
+                </a>
+                <p>Помогаем находить пространства для событий по всей России.</p>
+            </div>
+            <div>
+                <h2>Навигация</h2>
+                <a href="{{ url_for('portal.rooms') }}">Каталог помещений</a>
+                {% if g.user and not g.user['is_admin'] %}<a href="{{ url_for('portal.dashboard') }}">Личный кабинет</a>{% endif %}
+            </div>
+            <div>
+                <h2>Связаться</h2>
+                <a href="tel:88005552027">8 (800) 555-20-27</a>
+                <a href="mailto:hello@conference.test">hello@conference.test</a>
+            </div>
+        </div>
+        <div class="container footer-bottom">© 2027 Конференции.РФ · Учебный проект</div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="error-page"><div class="container">
+  <span class="error-code">!</span><h1>{{ title }}</h1><p>{{ message }}</p>
+  <a class="button button-primary" href="{{ url_for('portal.index') }}">Вернуться на главную</a>
+</div></section>
+{% endblock %}

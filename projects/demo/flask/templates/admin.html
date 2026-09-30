@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Панель администратора — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="admin-page">
+    <div class="container">
+        <div class="admin-heading">
+            <div><span class="eyebrow">Управление</span><h1>Панель администратора</h1><p>Проверяйте заявки и обновляйте их статусы.</p></div>
+            <span class="admin-account"><span aria-hidden="true">A</span>{{ g.user['username'] }}</span>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card"><span class="stat-icon stat-all">≡</span><p>Всего заявок<strong>{{ counts['total'] or 0 }}</strong></p></div>
+            <div class="stat-card"><span class="stat-icon stat-new">●</span><p>Новые<strong>{{ counts['new_count'] or 0 }}</strong></p></div>
+            <div class="stat-card"><span class="stat-icon stat-scheduled">▷</span><p>Назначены<strong>{{ counts['scheduled_count'] or 0 }}</strong></p></div>
+            <div class="stat-card"><span class="stat-icon stat-completed">✓</span><p>Завершены<strong>{{ counts['completed_count'] or 0 }}</strong></p></div>
+        </div>
+
+        <form class="admin-filters" method="get">
+            <div class="field search-field"><label for="q">Поиск</label><input id="q" name="q" value="{{ filters.q }}" placeholder="Заявка, клиент или площадка"></div>
+            <div class="field"><label for="status">Статус</label><select id="status" name="status"><option value="">Все статусы</option>{% for value, label in status_labels.items() %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+            <div class="field"><label for="category">Тип</label><select id="category" name="category"><option value="">Все типы</option>{% for value, label in room_type_labels.items() %}<option value="{{ value }}" {% if filters.category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+            <div class="field"><label for="payment">Оплата</label><select id="payment" name="payment"><option value="">Любая</option>{% for value, label in payment_labels.items() %}<option value="{{ value }}" {% if filters.payment == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+            <div class="field"><label for="sort">Сортировка</label><select id="sort" name="sort"><option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>Сначала новые</option><option value="date_asc" {% if filters.sort == 'date_asc' %}selected{% endif %}>Дата по возрастанию</option><option value="date_desc" {% if filters.sort == 'date_desc' %}selected{% endif %}>Дата по убыванию</option></select></div>
+            <div class="filter-actions"><button class="button button-primary button-small" type="submit">Применить</button>{% if filters.status or filters.category or filters.payment or filters.q or filters.sort != 'newest' %}<a class="button button-ghost button-small" href="{{ url_for('portal.admin') }}">Сбросить</a>{% endif %}</div>
+        </form>
+
+        <div class="admin-results-heading"><h2>Заявки</h2><span>Найдено: {{ applications|length }}</span></div>
+        {% if applications %}
+        <div class="admin-list">
+            {% for application in applications %}
+            <article class="admin-application-card">
+                <div class="admin-app-image"><img src="{{ url_for('static', filename=application['image']) }}" alt="" width="300" height="220" loading="lazy"><span class="status-badge status-{{ application['status'] }}">{{ status_labels[application['status']] }}</span></div>
+                <div class="admin-app-main">
+                    <div class="admin-app-title"><span>Заявка №{{ application['id'] }} · {{ application['created_at'][:10]|pretty_date }}</span><h3>{{ application['conference_name'] }}</h3><p>{{ application['room_name'] }} · {{ application['city'] }}</p></div>
+                    <dl class="admin-app-facts">
+                        <div><dt>Дата</dt><dd>{{ application['event_date']|pretty_date }}</dd></div><div><dt>Время</dt><dd>{{ application['start_time'] }}</dd></div><div><dt>Участников</dt><dd>{{ application['attendees'] }}</dd></div><div><dt>Оплата</dt><dd>{{ payment_labels[application['payment_method']] }}</dd></div>
+                    </dl>
+                    <details class="client-details"><summary>Данные клиента</summary><div><p><strong>{{ application['full_name'] }}</strong> ({{ application['username'] }})</p><a href="tel:{{ application['phone'] }}">{{ application['phone'] }}</a><a href="mailto:{{ application['email'] }}">{{ application['email'] }}</a></div></details>
+                    {% if application['rating'] %}<div class="admin-review"><span class="stars">{{ '★' * application['rating'] }}{{ '☆' * (5 - application['rating']) }}</span><q>{{ application['review_comment'] }}</q></div>{% endif %}
+                </div>
+                <form class="status-form" method="post" action="{{ url_for('portal.update_application_status', application_id=application['id'], status=filters.status, category=filters.category, payment=filters.payment, q=filters.q, sort=filters.sort) }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <label for="status-{{ application['id'] }}">Изменить статус</label>
+                    <select id="status-{{ application['id'] }}" name="status">
+                        {% for value, label in status_labels.items() %}<option value="{{ value }}" {% if application['status'] == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                    <button class="button button-primary button-small" type="submit">Сохранить</button>
+                </form>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}<div class="empty-state"><span class="empty-icon" aria-hidden="true">⌕</span><h2>Заявок не найдено</h2><p>Измените параметры поиска.</p><a class="button button-primary" href="{{ url_for('portal.admin') }}">Сбросить фильтры</a></div>{% endif %}
+    </div>
+</section>
+{% endblock %}

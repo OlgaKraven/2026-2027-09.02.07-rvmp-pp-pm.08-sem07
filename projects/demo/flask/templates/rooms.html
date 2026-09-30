@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Каталог помещений — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="page-hero page-hero-compact">
+    <div class="container">
+        <span class="eyebrow eyebrow-light">Каталог</span>
+        <h1>Помещения для вашей конференции</h1>
+        <p>Аудитории, коворкинги и кинозалы с готовым оборудованием.</p>
+    </div>
+</section>
+
+<section class="section catalog-section">
+    <div class="container">
+        <form class="filter-panel" method="get">
+            <div class="field">
+                <label for="category">Тип помещения</label>
+                <select id="category" name="category">
+                    <option value="">Все типы</option>
+                    {% for value, label in room_type_labels.items() %}<option value="{{ value }}" {% if filters.category == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label for="city">Город</label>
+                <select id="city" name="city">
+                    <option value="">Все города</option>
+                    {% for item in cities %}<option value="{{ item['city'] }}" {% if filters.city == item['city'] %}selected{% endif %}>{{ item['city'] }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label for="capacity">Не менее мест</label>
+                <input id="capacity" name="capacity" type="number" min="1" max="1000" value="{{ filters.capacity }}" placeholder="Например, 50">
+            </div>
+            <button class="button button-primary" type="submit">Показать</button>
+            {% if filters.category or filters.city or filters.capacity %}<a class="button button-ghost" href="{{ url_for('portal.rooms') }}">Сбросить</a>{% endif %}
+        </form>
+
+        <div class="catalog-heading">
+            <p>Найдено: <strong>{{ rooms|length }}</strong></p>
+        </div>
+
+        {% if rooms %}
+        <div class="room-grid">
+            {% for room in rooms %}{% include "_room_card.html" %}{% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">⌕</span>
+            <h2>Подходящих помещений не нашлось</h2>
+            <p>Измените фильтры или посмотрите весь каталог.</p>
+            <a class="button button-primary" href="{{ url_for('portal.rooms') }}">Сбросить фильтры</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

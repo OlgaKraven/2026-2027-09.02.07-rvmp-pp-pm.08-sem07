@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Помещения для конференций — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <span class="eyebrow"><span aria-hidden="true"></span> Пространства по всей России</span>
+            <h1>Место, где ваши идеи <em>становятся событием</em></h1>
+            <p>Выберите аудиторию, коворкинг или кинозал. Отправьте заявку онлайн и следите за её статусом в личном кабинете.</p>
+            <div class="hero-actions">
+                <a class="button button-primary button-large" href="{{ url_for('portal.rooms') }}">Найти помещение <span aria-hidden="true">→</span></a>
+                {% if not g.user %}<a class="text-link" href="{{ url_for('portal.register') }}">Создать аккаунт</a>{% endif %}
+            </div>
+            <ul class="hero-assurances" aria-label="Преимущества">
+                <li><span aria-hidden="true">✓</span> Проверенные площадки</li>
+                <li><span aria-hidden="true">✓</span> Понятные статусы</li>
+            </ul>
+        </div>
+        <div class="hero-visual">
+            <img src="{{ url_for('static', filename='img/auditorium-loft.jpg') }}" alt="Современная аудитория в лофте" width="1000" height="750">
+            <div class="hero-badge hero-badge-top"><strong>{{ stats['room_count'] }}</strong><span>площадок в каталоге</span></div>
+            <div class="hero-badge hero-badge-bottom"><span class="badge-check">✓</span><span><strong>Заявка онлайн</strong><small>за 3 минуты</small></span></div>
+        </div>
+    </div>
+</section>
+
+<section class="trust-strip" aria-label="Возможности каталога">
+    <div class="container trust-grid">
+        <div><strong>{{ stats['total_capacity'] }}</strong><span>мест в каталоге</span></div>
+        <div><strong>3</strong><span>формата помещений</span></div>
+        <div><strong>24/7</strong><span>доступ к заявкам</span></div>
+        <div><strong>100%</strong><span>прозрачные статусы</span></div>
+    </div>
+</section>
+
+<section class="section section-rooms">
+    <div class="container">
+        <div class="section-heading">
+            <div><span class="eyebrow">Выбор редакции</span><h2>Популярные площадки</h2></div>
+            <a class="text-link" href="{{ url_for('portal.rooms') }}">Смотреть все <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="room-grid">
+            {% for room in rooms %}{% include "_room_card.html" %}{% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section process-section">
+    <div class="container process-grid">
+        <div class="process-copy">
+            <span class="eyebrow">Быстро и понятно</span>
+            <h2>От идеи до бронирования — три шага</h2>
+            <p>Все заявки сохраняются в личном кабинете. Вы сразу увидите, когда администратор назначит мероприятие.</p>
+            <a class="button button-light" href="{{ url_for('portal.register') if not g.user else url_for('portal.new_application') }}">{{ 'Начать сейчас' if not g.user else 'Создать заявку' }}</a>
+        </div>
+        <ol class="steps">
+            <li><span>01</span><div><h3>Создайте профиль</h3><p>Зарегистрируйтесь и войдите в личный кабинет.</p></div></li>
+            <li><span>02</span><div><h3>Выберите площадку</h3><p>Укажите дату, время, число гостей и способ оплаты.</p></div></li>
+            <li><span>03</span><div><h3>Следите за статусом</h3><p>Администратор проверит заявку и назначит мероприятие.</p></div></li>
+        </ol>
+    </div>
+</section>
+
+{% if reviews %}
+<section class="section reviews-section">
+    <div class="container">
+        <div class="section-heading"><div><span class="eyebrow">Отзывы</span><h2>Что говорят организаторы</h2></div></div>
+        <div class="review-grid">
+            {% for review in reviews %}
+            <article class="review-card">
+                <div class="stars" aria-label="Оценка {{ review['rating'] }} из 5">{{ '★' * review['rating'] }}{{ '☆' * (5 - review['rating']) }}</div>
+                <blockquote>{{ review['comment'] }}</blockquote>
+                <p><strong>{{ review['full_name'] }}</strong><span>{{ review['room_name'] }}</span></p>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

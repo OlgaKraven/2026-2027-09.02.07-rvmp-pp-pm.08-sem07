@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Новая заявка — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="form-page application-form-page">
+    <div class="container form-page-grid">
+        <div class="page-heading form-page-intro">
+            <span class="eyebrow">Бронирование</span>
+            <h1>Новая заявка</h1>
+            <p>Заполните данные о конференции. Заявка получит статус «Новая» и поступит администратору.</p>
+            <div class="info-card">
+                <span aria-hidden="true">i</span>
+                <p><strong>Что будет дальше?</strong>Статус заявки изменится на «Мероприятие назначено» после проверки.</p>
+            </div>
+        </div>
+        <div class="form-card">
+            {% if errors %}<div class="form-alert" role="alert"><span>!</span>Проверьте отмеченные поля.</div>{% endif %}
+            <form method="post" class="stack-form" novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <div class="field {% if errors.get('room_id') %}has-error{% endif %}">
+                    <label for="room_id">Помещение <span>*</span></label>
+                    <select id="room_id" name="room_id" required data-room-select {% if errors.get('room_id') %}aria-describedby="room-error"{% endif %}>
+                        <option value="">Выберите помещение</option>
+                        {% for room in rooms %}<option value="{{ room['id'] }}" data-capacity="{{ room['capacity'] }}" data-city="{{ room['city'] }}" {% if values.room_id|string == room['id']|string %}selected{% endif %}>{{ room['name'] }} · {{ room['city'] }} · до {{ room['capacity'] }} чел.</option>{% endfor %}
+                    </select>
+                    <small data-room-hint>В каталоге доступны три типа площадок</small>
+                    {% if errors.get('room_id') %}<span class="field-error" id="room-error">{{ errors.room_id }}</span>{% endif %}
+                </div>
+                <div class="field {% if errors.get('conference_name') %}has-error{% endif %}">
+                    <label for="conference_name">Название конференции <span>*</span></label>
+                    <input id="conference_name" name="conference_name" value="{{ values.conference_name }}" required minlength="3" maxlength="120" placeholder="Например, Технологии будущего" {% if errors.get('conference_name') %}aria-describedby="conference-name-error"{% endif %}>
+                    {% if errors.get('conference_name') %}<span class="field-error" id="conference-name-error">{{ errors.conference_name }}</span>{% endif %}
+                </div>
+                <div class="form-grid three-columns">
+                    <div class="field {% if errors.get('event_date') %}has-error{% endif %}">
+                        <label for="event_date">Дата <span>*</span></label>
+                        <input id="event_date" name="event_date" type="date" min="{{ today_iso }}" value="{{ values.event_date }}" required {% if errors.get('event_date') %}aria-describedby="event-date-error"{% endif %}>
+                        {% if errors.get('event_date') %}<span class="field-error" id="event-date-error">{{ errors.event_date }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('start_time') %}has-error{% endif %}">
+                        <label for="start_time">Время начала <span>*</span></label>
+                        <input id="start_time" name="start_time" type="time" min="08:00" max="22:59" value="{{ values.start_time }}" required {% if errors.get('start_time') %}aria-describedby="start-time-error"{% endif %}>
+                        {% if errors.get('start_time') %}<span class="field-error" id="start-time-error">{{ errors.start_time }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('attendees') %}has-error{% endif %}">
+                        <label for="attendees">Участников <span>*</span></label>
+                        <input id="attendees" name="attendees" type="number" min="1" max="1000" value="{{ values.attendees }}" required inputmode="numeric" {% if errors.get('attendees') %}aria-describedby="attendees-error"{% endif %}>
+                        {% if errors.get('attendees') %}<span class="field-error" id="attendees-error">{{ errors.attendees }}</span>{% endif %}
+                    </div>
+                </div>
+                <fieldset class="field radio-field {% if errors.get('payment_method') %}has-error{% endif %}">
+                    <legend>Способ оплаты <span>*</span></legend>
+                    <div class="radio-grid">
+                        <label class="radio-card"><input type="radio" name="payment_method" value="onsite" {% if values.payment_method == 'onsite' %}checked{% endif %} required><span class="radio-check"></span><span><strong>При очном посещении</strong><small>Оплата администратору площадки</small></span></label>
+                        <label class="radio-card"><input type="radio" name="payment_method" value="sbp" {% if values.payment_method == 'sbp' %}checked{% endif %} required><span class="radio-check"></span><span><strong>Переводом по системе СБП</strong><small>Учебный выбор способа оплаты</small></span></label>
+                    </div>
+                    {% if errors.get('payment_method') %}<span class="field-error">{{ errors.payment_method }}</span>{% endif %}
+                </fieldset>
+                <button class="button button-primary button-full" type="submit">Отправить заявку <span aria-hidden="true">→</span></button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

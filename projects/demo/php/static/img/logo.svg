@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Логотип Конференции.РФ">
+  <rect width="48" height="48" rx="14" fill="#0d47a1"/>
+  <path d="M13 14.5h22v14H23l-7 6v-6h-3z" fill="#fff"/>
+  <circle cx="19" cy="21.5" r="2" fill="#007bff"/>
+  <circle cx="24" cy="21.5" r="2" fill="#007bff"/>
+  <circle cx="29" cy="21.5" r="2" fill="#007bff"/>
+</svg>

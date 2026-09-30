@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Лофт «Балтика»",
+    "category": "auditorium",
+    "city": "Санкт-Петербург",
+    "address": "Кожевенная линия, 30",
+    "capacity": 120,
+    "hourly_rate": 9500,
+    "image": "img/auditorium-loft.jpg",
+    "description": "Исторический лофт с двумя экранами и профессиональным звуком.",
+    "equipment": "2 экрана, проектор, звук, Wi‑Fi"
+  },
+  {
+    "id": 2,
+    "name": "Аудитория «Нева»",
+    "category": "auditorium",
+    "city": "Москва",
+    "address": "Ленинградский проспект, 39",
+    "capacity": 48,
+    "hourly_rate": 5200,
+    "image": "img/auditorium-neva.webp",
+    "description": "Светлый зал для стратегических сессий, лекций и обсуждений.",
+    "equipment": "Проектор, флипчарт, климат-контроль"
+  },
+  {
+    "id": 3,
+    "name": "Коворкинг «Спектр»",
+    "category": "coworking",
+    "city": "Казань",
+    "address": "ул. Петербургская, 52",
+    "capacity": 70,
+    "hourly_rate": 6100,
+    "image": "img/coworking-spectrum.jpg",
+    "description": "Гибкое пространство с рабочими зонами и местом для нетворкинга.",
+    "equipment": "Wi‑Fi, кухня, проектор, мобильная мебель"
+  },
+  {
+    "id": 4,
+    "name": "Коворкинг «Фабрика»",
+    "category": "coworking",
+    "city": "Екатеринбург",
+    "address": "ул. Бориса Ельцина, 3",
+    "capacity": 36,
+    "hourly_rate": 4300,
+    "image": "img/coworking-foundry.webp",
+    "description": "Камерное пространство для деловых клубов и рабочих групп.",
+    "equipment": "Экран 4K, видеосвязь, Wi‑Fi, кофе-пойнт"
+  },
+  {
+    "id": 5,
+    "name": "Кинозал «Вектор»",
+    "category": "cinema",
+    "city": "Нижний Новгород",
+    "address": "ул. Рождественская, 18",
+    "capacity": 42,
+    "hourly_rate": 5700,
+    "image": "img/cinema-vector.jpg",
+    "description": "Тихий зал с амфитеатром для видеопоказов и презентаций.",
+    "equipment": "Экран, Full HD проектор, 5.1 звук, Wi‑Fi"
+  },
+  {
+    "id": 6,
+    "name": "Кинозал «Панорама»",
+    "category": "cinema",
+    "city": "Новосибирск",
+    "address": "Красный проспект, 17",
+    "capacity": 85,
+    "hourly_rate": 7800,
+    "image": "img/cinema-panorama.jpg",
+    "description": "Просторный зал для отраслевых форумов и гибридных трансляций.",
+    "equipment": "2 экрана, 4K проектор, микрофоны, трансляция"
+  }
+]

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Регистрация — Конференции.РФ{% endblock %}
+{% block content %}
+<section class="form-page">
+    <div class="container narrow-container">
+        <div class="page-heading centered-heading">
+            <span class="eyebrow">Новый профиль</span>
+            <h1>Создайте учётную запись</h1>
+            <p>Заполните все поля. После регистрации вы сможете бронировать помещения.</p>
+        </div>
+        <div class="form-card">
+            {% if errors %}<div class="form-alert" role="alert"><span>!</span>Проверьте отмеченные поля.</div>{% endif %}
+            <form method="post" class="stack-form" novalidate>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <div class="form-grid two-columns">
+                    <div class="field {% if errors.get('username') %}has-error{% endif %}">
+                        <label for="username">Логин <span>*</span></label>
+                        <input id="username" name="username" value="{{ values.username }}" required minlength="6" pattern="[A-Za-z0-9]+" autocomplete="username" aria-describedby="username-hint{% if errors.get('username') %} username-error{% endif %}">
+                        <small id="username-hint">Латиница и цифры, не менее 6 символов</small>
+                        {% if errors.get('username') %}<span class="field-error" id="username-error">{{ errors.username }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('full_name') %}has-error{% endif %}">
+                        <label for="full_name">ФИО <span>*</span></label>
+                        <input id="full_name" name="full_name" value="{{ values.full_name }}" required autocomplete="name" placeholder="Иванов Иван Иванович" aria-describedby="full-name-hint{% if errors.get('full_name') %} full-name-error{% endif %}">
+                        <small id="full-name-hint">Только кириллица и пробелы</small>
+                        {% if errors.get('full_name') %}<span class="field-error" id="full-name-error">{{ errors.full_name }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('phone') %}has-error{% endif %}">
+                        <label for="phone">Телефон <span>*</span></label>
+                        <input id="phone" name="phone" value="{{ values.phone }}" required inputmode="numeric" autocomplete="tel" placeholder="8(900)123-45-67" pattern="8\([0-9]{3}\)[0-9]{3}-[0-9]{2}-[0-9]{2}" data-phone-mask {% if errors.get('phone') %}aria-describedby="phone-error"{% endif %}>
+                        {% if errors.get('phone') %}<span class="field-error" id="phone-error">{{ errors.phone }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('email') %}has-error{% endif %}">
+                        <label for="email">Электронная почта <span>*</span></label>
+                        <input id="email" name="email" type="email" value="{{ values.email }}" required autocomplete="email" placeholder="name@example.ru" {% if errors.get('email') %}aria-describedby="email-error"{% endif %}>
+                        {% if errors.get('email') %}<span class="field-error" id="email-error">{{ errors.email }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('password') %}has-error{% endif %}">
+                        <label for="password">Пароль <span>*</span></label>
+                        <div class="password-field">
+                            <input id="password" name="password" type="password" required minlength="8" autocomplete="new-password" aria-describedby="password-hint{% if errors.get('password') %} password-error{% endif %}">
+                            <button type="button" data-password-toggle aria-label="Показать пароль">◉</button>
+                        </div>
+                        <small id="password-hint">Не менее 8 символов</small>
+                        {% if errors.get('password') %}<span class="field-error" id="password-error">{{ errors.password }}</span>{% endif %}
+                    </div>
+                    <div class="field {% if errors.get('password_confirm') %}has-error{% endif %}">
+                        <label for="password_confirm">Повторите пароль <span>*</span></label>
+                        <div class="password-field">
+                            <input id="password_confirm" name="password_confirm" type="password" required minlength="8" autocomplete="new-password" {% if errors.get('password_confirm') %}aria-describedby="password-confirm-error"{% endif %}>
+                            <button type="button" data-password-toggle aria-label="Показать пароль">◉</button>
+                        </div>
+                        {% if errors.get('password_confirm') %}<span class="field-error" id="password-confirm-error">{{ errors.password_confirm }}</span>{% endif %}
+                    </div>
+                </div>
+                <p class="required-note"><span>*</span> Обязательные поля</p>
+                <button class="button button-primary button-full" type="submit">Создать пользователя <span aria-hidden="true">→</span></button>
+            </form>
+            <p class="auth-switch">Уже зарегистрированы? <a href="{{ url_for('portal.login') }}">Войти</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

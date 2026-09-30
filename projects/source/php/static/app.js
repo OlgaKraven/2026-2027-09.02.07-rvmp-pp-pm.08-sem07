@@ -1,0 +1,1 @@
+document.querySelectorAll('form[method="post"]').forEach(form=>form.addEventListener('submit',()=>{const button=form.querySelector('button');if(button){button.textContent='Отправка…';button.disabled=true;}}));
